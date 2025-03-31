@@ -1,2 +1,3 @@
-# linford-musiyambodza-portfolio
-My personal portfolio website showcasing web development, data analysis, and cybersecurity skills. Built with HTML, CSS, and JavaScript.
+# Portfolio
+This is my Portfolio about the work that I do.
+contact me any time
