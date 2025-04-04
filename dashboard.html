@@ -1,0 +1,3459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Business Analytics Dashboard</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- DateRangePicker for time filter -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <style>
+:root {
+    /* Light theme variables */
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --accent-primary: #0d6efd;
+    --accent-secondary: #6610f2;
+    --success: #198754;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --info: #0dcaf0;
+    --border: #dee2e6;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --chart-colors: #0d6efd, #6610f2, #6f42c1, #d63384, #dc3545, #fd7e14, #ffc107, #198754, #20c997, #0dcaf0;
+}
+
+[data-theme="dark"] {
+    /* Dark theme variables */
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-tertiary: #495057;
+    --text-primary: #f8f9fa;
+    --text-secondary: #adb5bd;
+    --accent-primary: #0d6efd;
+    --accent-secondary: #6610f2;
+    --border: #495057;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* Layout Components */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.dashboard-subtitle {
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+}
+
+/* Card Component */
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-body {
+    height: calc(100% - 3rem);
+}
+
+/* KPI Cards */
+.kpi-cards {
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-title {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.kpi-change {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    gap: 0.25rem;
+}
+
+.kpi-change.positive {
+    color: var(--success);
+}
+
+.kpi-change.negative {
+    color: var(--danger);
+}
+
+.kpi-change.neutral {
+    color: var(--text-secondary);
+}
+
+.kpi-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.25rem;
+    opacity: 0.15;
+}
+
+/* Chart Containers */
+.chart-large {
+    grid-column: span 8;
+    height: 400px;
+}
+
+.chart-medium {
+    grid-column: span 6;
+    height: 350px;
+}
+
+.chart-small {
+    grid-column: span 4;
+    height: 350px;
+}
+
+.chart-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+/* Filter Panel */
+.filters {
+    grid-column: span 12;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.filter-select,
+.filter-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Data Table */
+.data-table {
+    grid-column: span 12;
+    margin-top: 1.5rem;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.table th {
+    background-color: var(--bg-tertiary);
+    position: sticky;
+    top: 0;
+}
+
+.table tbody tr:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Pills and Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 1rem;
+}
+
+.badge-success {
+    background-color: var(--success);
+    color: white;
+}
+
+.badge-warning {
+    background-color: var(--warning);
+    color: black;
+}
+
+.badge-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.badge-info {
+    background-color: var(--info);
+    color: black;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, transform 0.1s;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+/* Toggle Switch */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-tertiary);
+    transition: 0.4s;
+    border-radius: 1.5rem;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1rem;
+    width: 1rem;
+    left: 0.25rem;
+    bottom: 0.25rem;
+    background-color: var(--bg-secondary);
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(1.5rem);
+}
+
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    background-color: var(--bg-secondary);
+    border-radius: 0.25rem;
+    box-shadow: var(--card-shadow);
+    z-index: 1000;
+    min-width: 150px;
+    display: none;
+}
+
+.context-menu.active {
+    display: block;
+}
+
+.context-menu ul {
+    list-style: none;
+}
+
+.context-menu li {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.context-menu li:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 0.25rem solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background-color: var(--bg-secondary);
+    border-radius: 0.25rem;
+    box-shadow: var(--card-shadow);
+    padding: 0.5rem;
+    z-index: 1000;
+    max-width: 200px;
+    display: none;
+}
+
+.tooltip.active {
+    display: block;
+}
+
+/* Notifications */
+.notification-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification {
+    background-color: var(--bg-secondary);
+    border-radius: 0.25rem;
+    box-shadow: var(--card-shadow);
+    padding: 1rem;
+    max-width: 300px;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    animation: slide-in 0.3s forwards;
+}
+
+.notification.success {
+    border-left: 4px solid var(--success);
+}
+
+.notification.warning {
+    border-left: 4px solid var(--warning);
+}
+
+.notification.danger {
+    border-left: 4px solid var(--danger);
+}
+
+.notification.info {
+    border-left: 4px solid var(--info);
+}
+
+.notification-icon {
+    font-size: 1.25rem;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.notification-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.notification-close {
+    cursor: pointer;
+    font-size: 0.875rem;
+    opacity: 0.5;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .chart-large {
+        grid-column: span 12;
+    }
+    .chart-medium {
+        grid-column: span 6;
+    }
+    .chart-small {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-medium,
+    .chart-small {
+        grid-column: span 12;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Drill-down Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    border-radius: 0.5rem;
+    box-shadow: var(--card-shadow);
+    width: 90%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(-50px);
+    transition: transform 0.3s;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Additional Classes */
+.hidden {
+    display: none !important;
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.text-warning {
+    color: var(--warning) !important;
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+.text-info {
+    color: var(--info) !important;
+}
+
+.align-right {
+    text-align: right !important;
+}
+
+.align-center {
+    text-align: center !important;
+}
+
+.font-bold {
+    font-weight: 600 !important;
+}
+
+.mt-1 {
+    margin-top: 0.5rem !important;
+}
+
+.mt-2 {
+    margin-top: 1rem !important;
+}
+
+.mt-3 {
+    margin-top: 1.5rem !important;
+}
+
+.mb-1 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Business Analytics Dashboard</h1>
+                <p class="dashboard-subtitle">Real-time insights for data-driven decisions</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="export-btn">
+                    <i class="fas fa-download"></i>
+                    Export Data
+                </button>
+                <button class="btn btn-secondary" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <div>
+                    <label class="theme-switch" for="theme-toggle">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters">
+            <div class="filter-group">
+                <label class="filter-label" for="date-range">Time Period</label>
+                <select class="filter-select" id="date-range">
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d" selected>Last 30 Days</option>
+                    <option value="90d">Last Quarter</option>
+                    <option value="1y">Last Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label" for="region-filter">Region</label>
+                <select class="filter-select" id="region-filter">
+                    <option value="all" selected>All Regions</option>
+                    <option value="na">North America</option>
+                    <option value="eu">Europe</option>
+                    <option value="asia">Asia Pacific</option>
+                    <option value="latam">Latin America</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label" for="product-filter">Product Category</label>
+                <select class="filter-select" id="product-filter">
+                    <option value="all" selected>All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="home">Home & Kitchen</option>
+                    <option value="beauty">Beauty & Personal Care</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label" for="customer-filter">Customer Segment</label>
+                <select class="filter-select" id="customer-filter">
+                    <option value="all" selected>All Segments</option>
+                    <option value="new">New Customers</option>
+                    <option value="returning">Returning Customers</option>
+                    <option value="vip">VIP Customers</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-cards">
+            <div class="kpi-card">
+                <i class="fas fa-dollar-sign kpi-icon"></i>
+                <div class="kpi-title">Total Revenue</div>
+                <div class="kpi-value">$1,243,890</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12.8% vs prev period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <i class="fas fa-shopping-cart kpi-icon"></i>
+                <div class="kpi-title">Total Orders</div>
+                <div class="kpi-value">18,465</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>8.4% vs prev period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <i class="fas fa-user kpi-icon"></i>
+                <div class="kpi-title">Conversion Rate</div>
+                <div class="kpi-value">3.2%</div>
+                <div class="kpi-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>0.5% vs prev period</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <i class="fas fa-tags kpi-icon"></i>
+                <div class="kpi-title">Avg. Order Value</div>
+                <div class="kpi-value">$67.36</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>4.1% vs prev period</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid">
+            <!-- Revenue Trend Chart -->
+            <div class="chart-large card">
+                <div class="card-header">
+                    <h3 class="card-title">Revenue Trend</h3>
+                    <div>
+                        <button class="btn btn-secondary btn-icon" id="revenue-chart-options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales by Category Chart -->
+            <div class="chart-small card">
+                <div class="card-header">
+                    <h3 class="card-title">Sales by Category</h3>
+                    <div>
+                        <button class="btn btn-secondary btn-icon" id="category-chart-options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Distribution Chart -->
+            <div class="chart-medium card">
+                <div class="card-header">
+                    <h3 class="card-title">Geographic Distribution</h3>
+                    <div>
+                        <button class="btn btn-secondary btn-icon" id="geo-chart-options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="geo-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Acquisition Chart -->
+            <div class="chart-medium card">
+                <div class="card-header">
+                    <h3 class="card-title">Customer Acquisition Channels</h3>
+                    <div>
+                        <button class="btn btn-secondary btn-icon" id="acquisition-chart-options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="acquisition-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Performance Chart -->
+            <div class="chart-small card">
+                <div class="card-header">
+                    <h3 class="card-title">Top Products</h3>
+                    <div>
+                        <button class="btn btn-secondary btn-icon" id="product-chart-options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="product-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="data-table card">
+            <div class="card-header">
+                <h3 class="card-title">Detailed Sales Data</h3>
+                <div>
+                    <button class="btn btn-secondary" id="table-filter-btn">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table" id="sales-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Region</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Revenue</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drill-down Modal -->
+    <div class="modal" id="drill-down-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="drill-down-title">Detail View</h2>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="drill-down-content">
+                <!-- Content will be populated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-cancel">Close</button>
+                <button class="btn btn-primary" id="modal-export">Export Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <ul>
+            <li data-action="view-details">View Details</li>
+            <li data-action="export">Export Data</li>
+            <li data-action="analyze">Analyze Trend</li>
+            <li data-action="share">Share</li>
+        </ul>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        /**
+         * Advanced Business Analytics Dashboard
+         * 
+         * This script implements a comprehensive business analytics dashboard with
+         * interactive visualizations, filters, drill-down capabilities, and more.
+         * 
+         * The dashboard follows best practices for maintainability, readability,
+         * and performance, using clean modular architecture with well-defined 
+         * responsibilities for each component.
+         * 
+         * @author Dashboard Team
+         * @version 1.0.0
+         */
+
+        // Use strict mode to catch common coding mistakes
+        'use strict';
+
+        /**
+         * Application state management
+         * Centralized store for application data and state
+         */
+        const AppState = {
+            // Current filter settings
+            filters: {
+                dateRange: '30d',
+                region: 'all',
+                product: 'all',
+                customer: 'all',
+                customDateStart: null,
+                customDateEnd: null
+            },
+            
+            // Dashboard theme
+            theme: 'light',
+            
+            // Chart instances for reference
+            charts: {},
+            
+            // Mock data sets
+            data: {
+                sales: [],
+                revenue: [],
+                categories: [],
+                regions: [],
+                products: [],
+                channels: []
+            },
+            
+            // Selected data for drill-down
+            selectedData: null,
+            
+            // Dashboard initialization status
+            initialized: false
+        };
+
+        /**
+         * Utility functions for common tasks
+         */
+        const Utils = {
+            /**
+             * Format a number as currency
+             * @param {number} value - The value to format
+             * @param {string} currency - Currency code (default: USD)
+             * @returns {string} Formatted currency string
+             */
+            formatCurrency: function(value, currency = 'USD') {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: currency
+                }).format(value);
+            },
+            
+            /**
+             * Format a number with thousands separators
+             * @param {number} value - The value to format
+             * @returns {string} Formatted number string
+             */
+            formatNumber: function(value) {
+                return new Intl.NumberFormat('en-US').format(value);
+            },
+            
+            /**
+             * Format a date to a readable string
+             * @param {Date|string} date - Date object or date string
+             * @param {string} format - Output format (short, medium, long)
+             * @returns {string} Formatted date string
+             */
+            formatDate: function(date, format = 'medium') {
+                const dateObj = typeof date === 'string' ? new Date(date) : date;
+                
+                const options = {
+                    short: { month: 'numeric', day: 'numeric' },
+                    medium: { year: 'numeric', month: 'short', day: 'numeric' },
+                    long: { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }
+                };
+                
+                return dateObj.toLocaleDateString('en-US', options[format] || options.medium);
+            },
+            
+            /**
+             * Generate a random hex color
+             * @returns {string} Random hex color
+             */
+            randomColor: function() {
+                return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            },
+            
+            /**
+             * Get a date from X days ago
+             * @param {number} days - Number of days to go back
+             * @returns {Date} Date object
+             */
+            getDateDaysAgo: function(days) {
+                const date = new Date();
+                date.setDate(date.getDate() - days);
+                return date;
+            },
+            
+            /**
+             * Generate dates between two dates
+             * @param {Date} startDate - Start date
+             * @param {Date} endDate - End date
+             * @param {string} interval - Interval (day, week, month)
+             * @returns {Array} Array of date objects
+             */
+            generateDateRange: function(startDate, endDate, interval = 'day') {
+                const dates = [];
+                const currentDate = new Date(startDate);
+                
+                while (currentDate <= endDate) {
+                    dates.push(new Date(currentDate));
+                    
+                    switch (interval) {
+                        case 'day':
+                            currentDate.setDate(currentDate.getDate() + 1);
+                            break;
+                        case 'week':
+                            currentDate.setDate(currentDate.getDate() + 7);
+                            break;
+                        case 'month':
+                            currentDate.setMonth(currentDate.getMonth() + 1);
+                            break;
+                        default:
+                            currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                }
+                
+                return dates;
+            },
+            
+            /**
+             * Debounce a function call
+             * @param {Function} func - The function to debounce
+             * @param {number} wait - Wait time in milliseconds
+             * @returns {Function} Debounced function
+             */
+            debounce: function(func, wait = 300) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            },
+            
+            /**
+             * Deep clone an object
+             * @param {Object} obj - Object to clone
+             * @returns {Object} Cloned object
+             */
+            deepClone: function(obj) {
+                return JSON.parse(JSON.stringify(obj));
+            },
+            
+            /**
+             * Generate a random alphanumeric ID
+             * @param {number} length - ID length
+             * @returns {string} Random ID
+             */
+            generateId: function(length = 8) {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let id = '';
+                for (let i = 0; i < length; i++) {
+                    id += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return id;
+            }
+        };
+
+        /**
+         * Data Service for handling data operations
+         * Manages loading, filtering, and processing data
+         */
+        const DataService = {
+            /**
+             * Generate mock sales data
+             * @param {number} count - Number of records to generate
+             * @returns {Array} Array of sales records
+             */
+            generateSalesData: function(count = 100) {
+                const regions = ['North America', 'Europe', 'Asia Pacific', 'Latin America'];
+                const regionCodes = ['na', 'eu', 'asia', 'latam'];
+                const categories = ['Electronics', 'Clothing', 'Home & Kitchen', 'Beauty & Personal Care'];
+                const categoryCodes = ['electronics', 'clothing', 'home', 'beauty'];
+                const products = [
+                    // Electronics
+                    ['Smart TV', 'Laptop', 'Smartphone', 'Tablet', 'Headphones'],
+                    // Clothing
+                    ['T-Shirt', 'Jeans', 'Dress', 'Jacket', 'Shoes'],
+                    // Home & Kitchen
+                    ['Coffee Maker', 'Blender', 'Cookware Set', 'Vacuum Cleaner', 'Toaster'],
+                    // Beauty & Personal Care
+                    ['Shampoo', 'Face Cream', 'Perfume', 'Makeup Kit', 'Hair Dryer']
+                ];
+                const statuses = ['Completed', 'Processing', 'Shipped', 'Returned'];
+                const statusCodes = ['completed', 'processing', 'shipped', 'returned'];
+                
+                const endDate = new Date();
+                const startDate = Utils.getDateDaysAgo(365);
+                
+                const sales = [];
+                
+                for (let i = 0; i < count; i++) {
+                    const regionIndex = Math.floor(Math.random() * regions.length);
+                    const categoryIndex = Math.floor(Math.random() * categories.length);
+                    const productIndex = Math.floor(Math.random() * products[categoryIndex].length);
+                    const statusIndex = Math.floor(Math.random() * statuses.length);
+                    
+                    // Random date between start and end
+                    const orderDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
+                    
+                    // Random price based on category
+                    let basePrice;
+                    switch (categoryIndex) {
+                        case 0: basePrice = 500 + Math.random() * 1000; break; // Electronics
+                        case 1: basePrice = 30 + Math.random() * 100; break;   // Clothing
+                        case 2: basePrice = 50 + Math.random() * 200; break;   // Home & Kitchen
+                        case 3: basePrice = 20 + Math.random() * 80; break;    // Beauty
+                        default: basePrice = 50 + Math.random() * 100;
+                    }
+                    
+                    // Random quantity between 1 and 5
+                    const quantity = Math.floor(Math.random() * 5) + 1;
+                    
+                    // Customer segment - weight towards returning
+                    const customerSegments = ['new', 'returning', 'returning', 'returning', 'vip'];
+                    const customerSegment = customerSegments[Math.floor(Math.random() * customerSegments.length)];
+                    
+                    // Random acquisition channel
+                    const channels = ['Organic Search', 'Direct', 'Social Media', 'Email', 'Referral', 'Paid Search'];
+                    const channel = channels[Math.floor(Math.random() * channels.length)];
+                    
+                    sales.push({
+                        orderId: 'ORD-' + Utils.generateId(6),
+                        date: orderDate,
+                        customer: 'Customer-' + Utils.generateId(4),
+                        customerSegment: customerSegment,
+                        region: regions[regionIndex],
+                        regionCode: regionCodes[regionIndex],
+                        product: products[categoryIndex][productIndex],
+                        category: categories[categoryIndex],
+                        categoryCode: categoryCodes[categoryIndex],
+                        quantity: quantity,
+                        unitPrice: basePrice,
+                        revenue: basePrice * quantity,
+                        status: statuses[statusIndex],
+                        statusCode: statusCodes[statusIndex],
+                        channel: channel
+                    });
+                }
+                
+                return sales;
+            },
+            
+            /**
+             * Filter sales data based on current filters
+             * @param {Array} data - Data to filter
+             * @returns {Array} Filtered data
+             */
+            filterData: function(data) {
+                if (!data || !data.length) return [];
+                
+                // Create a deep copy to avoid modifying the original
+                const filteredData = Utils.deepClone(data);
+                
+                // Apply date range filter
+                let startDate;
+                let endDate = new Date();
+                
+                switch (AppState.filters.dateRange) {
+                    case '7d':
+                        startDate = Utils.getDateDaysAgo(7);
+                        break;
+                    case '30d':
+                        startDate = Utils.getDateDaysAgo(30);
+                        break;
+                    case '90d':
+                        startDate = Utils.getDateDaysAgo(90);
+                        break;
+                    case '1y':
+                        startDate = Utils.getDateDaysAgo(365);
+                        break;
+                    case 'custom':
+                        startDate = AppState.filters.customDateStart || Utils.getDateDaysAgo(30);
+                        endDate = AppState.filters.customDateEnd || new Date();
+                        break;
+                    default:
+                        startDate = Utils.getDateDaysAgo(30);
+                }
+                
+                return filteredData.filter(item => {
+                    const itemDate = new Date(item.date);
+                    
+                    // Date filter
+                    if (itemDate < startDate || itemDate > endDate) {
+                        return false;
+                    }
+                    
+                    // Region filter
+                    if (AppState.filters.region !== 'all' && item.regionCode !== AppState.filters.region) {
+                        return false;
+                    }
+                    
+                    // Product category filter
+                    if (AppState.filters.product !== 'all' && item.categoryCode !== AppState.filters.product) {
+                        return false;
+                    }
+                    
+                    // Customer segment filter
+                    if (AppState.filters.customer !== 'all' && item.customerSegment !== AppState.filters.customer) {
+                        return false;
+                    }
+                    
+                    return true;
+                });
+            },
+            
+            /**
+             * Process data for different visualizations
+             * @param {Array} filteredData - Filtered data to process
+             * @returns {Object} Processed data for charts
+             */
+            processDataForCharts: function(filteredData) {
+                if (!filteredData || !filteredData.length) return {};
+                
+                // Group data by date for revenue trend
+                const salesByDate = {};
+                const startDate = Utils.getDateDaysAgo(30); // Default to 30 days
+                const endDate = new Date();
+                const dateRange = Utils.generateDateRange(startDate, endDate);
+                
+                // Initialize with all dates in range
+                dateRange.forEach(date => {
+                    const dateKey = date.toISOString().split('T')[0];
+                    salesByDate[dateKey] = {
+                        date: dateKey,
+                        revenue: 0,
+                        orders: 0
+                    };
+                });
+                
+                // Aggregate sales by date
+                filteredData.forEach(sale => {
+                    const dateKey = new Date(sale.date).toISOString().split('T')[0];
+                    if (salesByDate[dateKey]) {
+                        salesByDate[dateKey].revenue += sale.revenue;
+                        salesByDate[dateKey].orders += 1;
+                    }
+                });
+                
+                // Convert to array and sort by date
+                const revenueTrend = Object.values(salesByDate).sort((a, b) => 
+                    new Date(a.date) - new Date(b.date)
+                );
+                
+                // Group data by category
+                const salesByCategory = {};
+                filteredData.forEach(sale => {
+                    if (!salesByCategory[sale.category]) {
+                        salesByCategory[sale.category] = {
+                            category: sale.category,
+                            revenue: 0,
+                            orders: 0
+                        };
+                    }
+                    salesByCategory[sale.category].revenue += sale.revenue;
+                    salesByCategory[sale.category].orders += 1;
+                });
+                
+                // Group data by region
+                const salesByRegion = {};
+                filteredData.forEach(sale => {
+                    if (!salesByRegion[sale.region]) {
+                        salesByRegion[sale.region] = {
+                            region: sale.region,
+                            revenue: 0,
+                            orders: 0
+                        };
+                    }
+                    salesByRegion[sale.region].revenue += sale.revenue;
+                    salesByRegion[sale.region].orders += 1;
+                });
+                
+                // Group data by acquisition channel
+                const salesByChannel = {};
+                filteredData.forEach(sale => {
+                    if (!salesByChannel[sale.channel]) {
+                        salesByChannel[sale.channel] = {
+                            channel: sale.channel,
+                            revenue: 0,
+                            orders: 0
+                        };
+                    }
+                    salesByChannel[sale.channel].revenue += sale.revenue;
+                    salesByChannel[sale.channel].orders += 1;
+                });
+                
+                // Get top products by revenue
+                const salesByProduct = {};
+                filteredData.forEach(sale => {
+                    if (!salesByProduct[sale.product]) {
+                        salesByProduct[sale.product] = {
+                            product: sale.product,
+                            revenue: 0,
+                            orders: 0
+                        };
+                    }
+                    salesByProduct[sale.product].revenue += sale.revenue;
+                    salesByProduct[sale.product].orders += 1;
+                });
+                
+                const topProducts = Object.values(salesByProduct)
+                    .sort((a, b) => b.revenue - a.revenue)
+                    .slice(0, 5);
+                
+                return {
+                    revenueTrend,
+                    salesByCategory: Object.values(salesByCategory),
+                    salesByRegion: Object.values(salesByRegion),
+                    salesByChannel: Object.values(salesByChannel),
+                    topProducts
+                };
+            },
+            
+            /**
+             * Calculate key performance indicators
+             * @param {Array} currentData - Current period filtered data
+             * @returns {Object} KPI metrics
+             */
+            calculateKPIs: function(currentData) {
+                if (!currentData || !currentData.length) return {};
+                
+                // Get date range for previous period
+                let currentStartDate;
+                const currentEndDate = new Date();
+                
+                switch (AppState.filters.dateRange) {
+                    case '7d':
+                        currentStartDate = Utils.getDateDaysAgo(7);
+                        break;
+                    case '30d':
+                        currentStartDate = Utils.getDateDaysAgo(30);
+                        break;
+                    case '90d':
+                        currentStartDate = Utils.getDateDaysAgo(90);
+                        break;
+                    case '1y':
+                        currentStartDate = Utils.getDateDaysAgo(365);
+                        break;
+                    case 'custom':
+                        currentStartDate = AppState.filters.customDateStart || Utils.getDateDaysAgo(30);
+                        break;
+                    default:
+                        currentStartDate = Utils.getDateDaysAgo(30);
+                }
+                
+                const currentPeriodDays = Math.round((currentEndDate - currentStartDate) / (1000 * 60 * 60 * 24));
+                const previousStartDate = new Date(currentStartDate);
+                previousStartDate.setDate(previousStartDate.getDate() - currentPeriodDays);
+                
+                // Filter for previous period
+                const previousPeriodData = AppState.data.sales.filter(item => {
+                    const itemDate = new Date(item.date);
+                    return itemDate >= previousStartDate && itemDate < currentStartDate;
+                });
+                
+                // Calculate current period metrics
+                const currentRevenue = currentData.reduce((sum, item) => sum + item.revenue, 0);
+                const currentOrders = currentData.length;
+                const currentCustomers = new Set(currentData.map(item => item.customer)).size;
+                const currentAOV = currentOrders > 0 ? currentRevenue / currentOrders : 0;
+                const currentConversionRate = 3.2; // Placeholder value (would come from another data source)
+                
+                // Calculate previous period metrics
+                const previousRevenue = previousPeriodData.reduce((sum, item) => sum + item.revenue, 0);
+                const previousOrders = previousPeriodData.length;
+                const previousCustomers = new Set(previousPeriodData.map(item => item.customer)).size;
+                const previousAOV = previousOrders > 0 ? previousRevenue / previousOrders : 0;
+                const previousConversionRate = 3.7; // Placeholder value
+                
+                // Calculate percent changes
+                const revenueChange = previousRevenue > 0 ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 : 0;
+                const ordersChange = previousOrders > 0 ? ((currentOrders - previousOrders) / previousOrders) * 100 : 0;
+                const customersChange = previousCustomers > 0 ? ((currentCustomers - previousCustomers) / previousCustomers) * 100 : 0;
+                const aovChange = previousAOV > 0 ? ((currentAOV - previousAOV) / previousAOV) * 100 : 0;
+                const conversionChange = previousConversionRate > 0 ? ((currentConversionRate - previousConversionRate) / previousConversionRate) * 100 : 0;
+                
+                return {
+                    current: {
+                        revenue: currentRevenue,
+                        orders: currentOrders,
+                        customers: currentCustomers,
+                        aov: currentAOV,
+                        conversionRate: currentConversionRate
+                    },
+                    previous: {
+                        revenue: previousRevenue,
+                        orders: previousOrders,
+                        customers: previousCustomers,
+                        aov: previousAOV,
+                        conversionRate: previousConversionRate
+                    },
+                    change: {
+                        revenue: revenueChange,
+                        orders: ordersChange,
+                        customers: customersChange,
+                        aov: aovChange,
+                        conversionRate: conversionChange
+                    }
+                };
+            }
+        };
+
+        /**
+         * Chart Service for handling chart creation and updates
+         * Manages chart configuration, rendering, and interactivity
+         */
+        const ChartService = {
+            /**
+             * Initialize all charts
+             * @param {Object} data - Data for charts
+             */
+            initCharts: function(data) {
+                this.createRevenueChart(data.revenueTrend);
+                this.createCategoryChart(data.salesByCategory);
+                this.createGeoChart(data.salesByRegion);
+                this.createAcquisitionChart(data.salesByChannel);
+                this.createProductChart(data.topProducts);
+            },
+            
+            /**
+             * Update all charts with new data
+             * @param {Object} data - New data for charts
+             */
+            updateCharts: function(data) {
+                this.updateRevenueChart(data.revenueTrend);
+                this.updateCategoryChart(data.salesByCategory);
+                this.updateGeoChart(data.salesByRegion);
+                this.updateAcquisitionChart(data.salesByChannel);
+                this.updateProductChart(data.topProducts);
+            },
+            
+            /**
+             * Create revenue trend line chart
+             * @param {Array} data - Revenue trend data
+             */
+            createRevenueChart: function(data) {
+                const ctx = document.getElementById('revenue-chart').getContext('2d');
+                
+                // Format the data for Chart.js
+                const labels = data.map(item => Utils.formatDate(item.date, 'short'));
+                const revenueData = data.map(item => item.revenue);
+                const ordersData = data.map(item => item.orders * 10); // Scale for display
+                
+                const chartConfig = {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: revenueData,
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Orders',
+                                data: ordersData,
+                                borderColor: '#6610f2',
+                                backgroundColor: 'rgba(102, 16, 242, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.dataset.label === 'Revenue') {
+                                            return context.dataset.label + ': ' + Utils.formatCurrency(context.raw);
+                                        } else {
+                                            return context.dataset.label + ': ' + Utils.formatNumber(context.raw / 10); // Rescale
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Revenue',
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return Utils.formatCurrency(value, 'USD', 0);
+                                    },
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Orders',
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return Utils.formatNumber(value / 10);
+                                    },
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    drawOnChartArea: false,
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                AppState.charts.revenue = new Chart(ctx, chartConfig);
+            },
+            
+            /**
+             * Update revenue chart with new data
+             * @param {Array} data - New revenue trend data
+             */
+            updateRevenueChart: function(data) {
+                if (!AppState.charts.revenue) return;
+                
+                const labels = data.map(item => Utils.formatDate(item.date, 'short'));
+                const revenueData = data.map(item => item.revenue);
+                const ordersData = data.map(item => item.orders * 10); // Scale for display
+                
+                AppState.charts.revenue.data.labels = labels;
+                AppState.charts.revenue.data.datasets[0].data = revenueData;
+                AppState.charts.revenue.data.datasets[1].data = ordersData;
+                AppState.charts.revenue.update();
+            },
+            
+            /**
+             * Create category pie chart
+             * @param {Array} data - Sales by category data
+             */
+            createCategoryChart: function(data) {
+                const ctx = document.getElementById('category-chart').getContext('2d');
+                
+                // Format the data for Chart.js
+                const labels = data.map(item => item.category);
+                const values = data.map(item => item.revenue);
+                const colors = [
+                    '#0d6efd', '#6610f2', '#6f42c1', '#d63384',
+                    '#dc3545', '#fd7e14', '#ffc107', '#198754'
+                ];
+                
+                const chartConfig = {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 1,
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary')
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return context.label + ': ' + Utils.formatCurrency(value) + ' (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                AppState.charts.category = new Chart(ctx, chartConfig);
+            },
+            
+            /**
+             * Update category chart with new data
+             * @param {Array} data - New sales by category data
+             */
+            updateCategoryChart: function(data) {
+                if (!AppState.charts.category) return;
+                
+                const labels = data.map(item => item.category);
+                const values = data.map(item => item.revenue);
+                
+                AppState.charts.category.data.labels = labels;
+                AppState.charts.category.data.datasets[0].data = values;
+                AppState.charts.category.update();
+            },
+            
+            /**
+             * Create geographic distribution bar chart
+             * @param {Array} data - Sales by region data
+             */
+            createGeoChart: function(data) {
+                const ctx = document.getElementById('geo-chart').getContext('2d');
+                
+                // Sort by revenue descending
+                data.sort((a, b) => b.revenue - a.revenue);
+                
+                // Format the data for Chart.js
+                const labels = data.map(item => item.region);
+                const revenueData = data.map(item => item.revenue);
+                const ordersData = data.map(item => item.orders);
+                
+                const chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: revenueData,
+                                backgroundColor: '#0d6efd',
+                                borderColor: '#0d6efd',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Orders',
+                                data: ordersData,
+                                backgroundColor: '#6610f2',
+                                borderColor: '#6610f2',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.dataset.label === 'Revenue') {
+                                            return context.dataset.label + ': ' + Utils.formatCurrency(context.raw);
+                                        } else {
+                                            return context.dataset.label + ': ' + Utils.formatNumber(context.raw);
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000) {
+                                            return '$' + value / 1000 + 'k';
+                                        }
+                                        return '$' + value;
+                                    },
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                AppState.charts.geo = new Chart(ctx, chartConfig);
+            },
+            
+            /**
+             * Update geographic chart with new data
+             * @param {Array} data - New sales by region data
+             */
+            updateGeoChart: function(data) {
+                if (!AppState.charts.geo) return;
+                
+                // Sort by revenue descending
+                data.sort((a, b) => b.revenue - a.revenue);
+                
+                const labels = data.map(item => item.region);
+                const revenueData = data.map(item => item.revenue);
+                const ordersData = data.map(item => item.orders);
+                
+                AppState.charts.geo.data.labels = labels;
+                AppState.charts.geo.data.datasets[0].data = revenueData;
+                AppState.charts.geo.data.datasets[1].data = ordersData;
+                AppState.charts.geo.update();
+            },
+            
+            /**
+             * Create acquisition channels doughnut chart
+             * @param {Array} data - Sales by channel data
+             */
+            createAcquisitionChart: function(data) {
+                const ctx = document.getElementById('acquisition-chart').getContext('2d');
+                
+                // Sort by revenue descending
+                data.sort((a, b) => b.revenue - a.revenue);
+                
+                // Format the data for Chart.js
+                const labels = data.map(item => item.channel);
+                const values = data.map(item => item.revenue);
+                const colors = [
+                    '#0d6efd', '#6610f2', '#6f42c1', '#d63384',
+                    '#dc3545', '#fd7e14', '#ffc107', '#198754'
+                ];
+                
+                const chartConfig = {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 1,
+                            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary')
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return context.label + ': ' + Utils.formatCurrency(value) + ' (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                AppState.charts.acquisition = new Chart(ctx, chartConfig);
+            },
+            
+            /**
+             * Update acquisition chart with new data
+             * @param {Array} data - New sales by channel data
+             */
+            updateAcquisitionChart: function(data) {
+                if (!AppState.charts.acquisition) return;
+                
+                // Sort by revenue descending
+                data.sort((a, b) => b.revenue - a.revenue);
+                
+                const labels = data.map(item => item.channel);
+                const values = data.map(item => item.revenue);
+                
+                AppState.charts.acquisition.data.labels = labels;
+                AppState.charts.acquisition.data.datasets[0].data = values;
+                AppState.charts.acquisition.update();
+            },
+            
+            /**
+             * Create top products horizontal bar chart
+             * @param {Array} data - Top products data
+             */
+            createProductChart: function(data) {
+                const ctx = document.getElementById('product-chart').getContext('2d');
+                
+                // Format the data for Chart.js
+                const labels = data.map(item => item.product);
+                const values = data.map(item => item.revenue);
+                
+                const chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            axis: 'y',
+                            label: 'Revenue',
+                            data: values,
+                            backgroundColor: '#0d6efd',
+                            borderColor: '#0d6efd',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Revenue: ' + Utils.formatCurrency(context.raw);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000) {
+                                            return '$' + value / 1000 + 'k';
+                                        }
+                                        return '$' + value;
+                                    },
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary')
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                AppState.charts.product = new Chart(ctx, chartConfig);
+            },
+            
+            /**
+             * Update product chart with new data
+             * @param {Array} data - New top products data
+             */
+            updateProductChart: function(data) {
+                if (!AppState.charts.product) return;
+                
+                const labels = data.map(item => item.product);
+                const values = data.map(item => item.revenue);
+                
+                AppState.charts.product.data.labels = labels;
+                AppState.charts.product.data.datasets[0].data = values;
+                AppState.charts.product.update();
+            }
+        };
+
+        /**
+         * UI Service for handling user interface operations
+         * Manages DOM manipulations, event handlers, and UI updates
+         */
+        const UIService = {
+            /**
+             * Initialize the UI
+             */
+            init: function() {
+                this.setupEventListeners();
+                this.setupThemeToggle();
+                this.populateKPICards();
+                this.populateDataTable();
+            },
+            
+            /**
+             * Set up event listeners for UI elements
+             */
+            setupEventListeners: function() {
+                // Filter change events
+                document.getElementById('date-range').addEventListener('change', this.handleFilterChange);
+                document.getElementById('region-filter').addEventListener('change', this.handleFilterChange);
+                document.getElementById('product-filter').addEventListener('change', this.handleFilterChange);
+                document.getElementById('customer-filter').addEventListener('change', this.handleFilterChange);
+                
+                // Button click events
+                document.getElementById('export-btn').addEventListener('click', this.handleExport);
+                document.getElementById('refresh-btn').addEventListener('click', this.handleRefresh);
+                document.getElementById('table-filter-btn').addEventListener('click', this.toggleTableFilters);
+                
+                // Chart option buttons
+                document.getElementById('revenue-chart-options').addEventListener('click', (e) => this.showChartOptions(e, 'revenue'));
+                document.getElementById('category-chart-options').addEventListener('click', (e) => this.showChartOptions(e, 'category'));
+                document.getElementById('geo-chart-options').addEventListener('click', (e) => this.showChartOptions(e, 'geo'));
+                document.getElementById('acquisition-chart-options').addEventListener('click', (e) => this.showChartOptions(e, 'acquisition'));
+                document.getElementById('product-chart-options').addEventListener('click', (e) => this.showChartOptions(e, 'product'));
+                
+                // Context menu
+                document.addEventListener('click', this.hideContextMenu);
+                document.getElementById('context-menu').addEventListener('click', this.handleContextMenuAction);
+                
+                // Modal events
+                document.getElementById('modal-close').addEventListener('click', this.closeModal);
+                document.getElementById('modal-cancel').addEventListener('click', this.closeModal);
+                document.getElementById('modal-export').addEventListener('click', this.exportModalData);
+                
+                // Data table row click for drill-down
+                document.querySelector('#sales-table tbody').addEventListener('click', this.handleTableRowClick);
+                
+                // Window resize event for responsive charts
+                window.addEventListener('resize', Utils.debounce(() => {
+                    Object.values(AppState.charts).forEach(chart => {
+                        if (chart) chart.resize();
+                    });
+                }, 250));
+            },
+            
+            /**
+             * Set up theme toggle functionality
+             */
+            setupThemeToggle: function() {
+                const themeToggle = document.getElementById('theme-toggle');
+                
+                // Check for saved theme preference
+                const savedTheme = localStorage.getItem('dashboard-theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeToggle.checked = true;
+                    AppState.theme = 'dark';
+                }
+                
+                // Toggle theme on switch change
+                themeToggle.addEventListener('change', () => {
+                    if (themeToggle.checked) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('dashboard-theme', 'dark');
+                        AppState.theme = 'dark';
+                    } else {
+                        document.documentElement.removeAttribute('data-theme');
+                        localStorage.setItem('dashboard-theme', 'light');
+                        AppState.theme = 'light';
+                    }
+                    
+                    // Update chart colors
+                    this.updateChartThemeColors();
+                });
+            },
+            
+            /**
+             * Update chart colors based on current theme
+             */
+            updateChartThemeColors: function() {
+                // Update text colors in charts based on theme
+                const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+                const secondaryTextColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+                const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border');
+                
+                Object.values(AppState.charts).forEach(chart => {
+                    if (!chart) return;
+                    
+                    // Update legend text color
+                    if (chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                        chart.options.plugins.legend.labels.color = textColor;
+                    }
+                    
+                    // Update scales if they exist
+                    if (chart.options.scales) {
+                        Object.values(chart.options.scales).forEach(scale => {
+                            if (scale.ticks) {
+                                scale.ticks.color = secondaryTextColor;
+                            }
+                            if (scale.grid) {
+                                scale.grid.color = borderColor;
+                            }
+                            if (scale.title) {
+                                scale.title.color = textColor;
+                            }
+                        });
+                    }
+                    
+                    chart.update();
+                });
+            },
+            
+            /**
+             * Show loading overlay
+             * @param {boolean} show - Whether to show or hide the overlay
+             */
+            showLoading: function(show = true) {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                if (show) {
+                    loadingOverlay.style.display = 'flex';
+                    // Simulate loading for demo
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                    }, 1000);
+                } else {
+                    loadingOverlay.style.display = 'none';
+                }
+            },
+            
+            /**
+             * Show notification
+             * @param {string} title - Notification title
+             * @param {string} message - Notification message
+             * @param {string} type - Notification type (success, warning, danger, info)
+             */
+            showNotification: function(title, message, type = 'info') {
+                const container = document.getElementById('notification-container');
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                // Icon based on type
+                let icon;
+                switch (type) {
+                    case 'success': icon = 'fa-check-circle'; break;
+                    case 'warning': icon = 'fa-exclamation-triangle'; break;
+                    case 'danger': icon = 'fa-times-circle'; break;
+                    default: icon = 'fa-info-circle';
+                }
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <div class="notification-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                
+                // Add to container
+                container.appendChild(notification);
+                
+                // Add event listener for close button
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.style.animation = 'slide-out 0.3s forwards';
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 300);
+                });
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (container.contains(notification)) {
+                        notification.style.animation = 'slide-out 0.3s forwards';
+                        setTimeout(() => {
+                            if (container.contains(notification)) {
+                                container.removeChild(notification);
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            },
+            
+            /**
+             * Show context menu
+             * @param {Event} e - Click event
+             * @param {string} chartType - Type of chart clicked
+             */
+            showChartOptions: function(e, chartType) {
+                e.stopPropagation();
+                
+                const contextMenu = document.getElementById('context-menu');
+                const rect = e.target.getBoundingClientRect();
+                
+                contextMenu.style.top = rect.bottom + 'px';
+                contextMenu.style.left = rect.left + 'px';
+                contextMenu.classList.add('active');
+                contextMenu.dataset.chartType = chartType;
+            },
+            
+            /**
+             * Hide context menu
+             */
+            hideContextMenu: function() {
+                const contextMenu = document.getElementById('context-menu');
+                contextMenu.classList.remove('active');
+            },
+            
+            /**
+             * Handle context menu action
+             * @param {Event} e - Click event
+             */
+            handleContextMenuAction: function(e) {
+                const action = e.target.dataset.action;
+                const chartType = document.getElementById('context-menu').dataset.chartType;
+                
+                if (!action || !chartType) return;
+                
+                UIService.hideContextMenu();
+                
+                switch (action) {
+                    case 'view-details':
+                        UIService.showDrillDown(chartType);
+                        break;
+                    case 'export':
+                        UIService.exportChartData(chartType);
+                        break;
+                    case 'analyze':
+                        UIService.showTrendAnalysis(chartType);
+                        break;
+                    case 'share':
+                        UIService.showShareOptions(chartType);
+                        break;
+                }
+            },
+            
+            /**
+             * Show drill-down modal
+             * @param {string} type - Type of data for drill-down
+             * @param {Object} data - Optional specific data for drill-down
+             */
+            showDrillDown: function(type, data = null) {
+                const modal = document.getElementById('drill-down-modal');
+                const modalTitle = document.getElementById('drill-down-title');
+                const modalContent = document.getElementById('drill-down-content');
+                let content = '';
+                
+                switch (type) {
+                    case 'revenue':
+                        modalTitle.textContent = 'Revenue Trend Analysis';
+                        content = this.generateRevenueDrillDown();
+                        break;
+                    case 'category':
+                        modalTitle.textContent = 'Category Performance Analysis';
+                        content = this.generateCategoryDrillDown();
+                        break;
+                    case 'geo':
+                        modalTitle.textContent = 'Geographic Distribution Analysis';
+                        content = this.generateGeoDrillDown();
+                        break;
+                    case 'acquisition':
+                        modalTitle.textContent = 'Acquisition Channel Analysis';
+                        content = this.generateAcquisitionDrillDown();
+                        break;
+                    case 'product':
+                        modalTitle.textContent = 'Product Performance Analysis';
+                        content = this.generateProductDrillDown();
+                        break;
+                    case 'order':
+                        modalTitle.textContent = 'Order Details';
+                        content = this.generateOrderDrillDown(data);
+                        break;
+                    default:
+                        modalTitle.textContent = 'Detail View';
+                        content = '<p>No detailed data available.</p>';
+                }
+                
+                modalContent.innerHTML = content;
+                modal.classList.add('active');
+                
+                // Store selected data for export
+                AppState.selectedData = { type, data };
+            },
+            
+            /**
+             * Close drill-down modal
+             */
+            closeModal: function() {
+                const modal = document.getElementById('drill-down-modal');
+                modal.classList.remove('active');
+            },
+            
+            /**
+             * Generate revenue trend drill-down content
+             * @returns {string} HTML content
+             */
+            generateRevenueDrillDown: function() {
+                // Get revenue data
+                const revenueData = AppState.data.revenue;
+                if (!revenueData || !revenueData.length) {
+                    return '<p>No revenue data available.</p>';
+                }
+                
+                // Calculate summary statistics
+                const totalRevenue = revenueData.reduce((sum, item) => sum + item.revenue, 0);
+                const totalOrders = revenueData.reduce((sum, item) => sum + item.orders, 0);
+                const averageRevenuePerDay = totalRevenue / revenueData.length;
+                const averageOrdersPerDay = totalOrders / revenueData.length;
+                
+                // Find peak days
+                const peakRevenueDay = [...revenueData].sort((a, b) => b.revenue - a.revenue)[0];
+                const peakOrdersDay = [...revenueData].sort((a, b) => b.orders - a.orders)[0];
+                
+                // Calculate growth
+                const firstWeekRevenue = revenueData.slice(0, 7).reduce((sum, item) => sum + item.revenue, 0);
+                const lastWeekRevenue = revenueData.slice(-7).reduce((sum, item) => sum + item.revenue, 0);
+                const revenueGrowth = ((lastWeekRevenue - firstWeekRevenue) / firstWeekRevenue) * 100;
+                
+                // Generate content
+                let content = `
+                    <div class="grid" style="margin-bottom: 1.5rem;">
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Summary Statistics</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Total Revenue</th>
+                                            <td>${Utils.formatCurrency(totalRevenue)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Orders</th>
+                                            <td>${Utils.formatNumber(totalOrders)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Average Daily Revenue</th>
+                                            <td>${Utils.formatCurrency(averageRevenuePerDay)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Average Daily Orders</th>
+                                            <td>${Utils.formatNumber(averageOrdersPerDay)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Peak Revenue Day</th>
+                                            <td>${Utils.formatDate(peakRevenueDay.date, 'medium')} (${Utils.formatCurrency(peakRevenueDay.revenue)})</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Peak Orders Day</th>
+                                            <td>${Utils.formatDate(peakOrdersDay.date, 'medium')} (${Utils.formatNumber(peakOrdersDay.orders)} orders)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Revenue Growth</th>
+                                            <td class="${revenueGrowth > 0 ? 'text-success' : 'text-danger'}">
+                                                ${revenueGrowth.toFixed(2)}% (first week vs last week)
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Weekly Revenue Comparison</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-2">Week-over-week revenue comparison shows overall growth trend with some fluctuations.</p>
+                                <p class="mb-2">Peak revenue periods align with promotional events and seasonal trends.</p>
+                                <p class="mb-2">Day-of-week analysis shows stronger performance on weekends.</p>
+                                <p>Revenue per order has increased by 4.2% over the analysis period.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Daily Revenue Data</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Revenue</th>
+                                        <th>Orders</th>
+                                        <th>Avg. Order Value</th>
+                                        <th>Day-over-Day Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                // Add rows for each day (limit to 10 most recent for demo)
+                const sortedData = [...revenueData].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+                sortedData.forEach((item, index) => {
+                    const prevDay = index < sortedData.length - 1 ? sortedData[index + 1] : null;
+                    const dayOverDayChange = prevDay 
+                        ? ((item.revenue - prevDay.revenue) / prevDay.revenue) * 100 
+                        : 0;
+                    const avgOrderValue = item.orders > 0 ? item.revenue / item.orders : 0;
+                    
+                    content += `
+                        <tr>
+                            <td>${Utils.formatDate(item.date, 'medium')}</td>
+                            <td>${Utils.formatCurrency(item.revenue)}</td>
+                            <td>${Utils.formatNumber(item.orders)}</td>
+                            <td>${Utils.formatCurrency(avgOrderValue)}</td>
+                            <td class="${dayOverDayChange > 0 ? 'text-success' : dayOverDayChange < 0 ? 'text-danger' : ''}">
+                                ${dayOverDayChange.toFixed(2)}%
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                content += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                return content;
+            },
+            
+            /**
+             * Generate category performance drill-down content
+             * @returns {string} HTML content
+             */
+            generateCategoryDrillDown: function() {
+                // Get category data
+                const categoryData = AppState.data.categories;
+                if (!categoryData || !categoryData.length) {
+                    return '<p>No category data available.</p>';
+                }
+                
+                // Sort by revenue
+                const sortedCategories = [...categoryData].sort((a, b) => b.revenue - a.revenue);
+                
+                // Calculate total revenue for percentages
+                const totalRevenue = sortedRegions.reduce((sum, item) => sum + item.revenue, 0);
+                const totalOrders = sortedRegions.reduce((sum, item) => sum + item.orders, 0);
+                
+                // Generate content
+                let content = `
+                    <div class="grid" style="margin-bottom: 1.5rem;">
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Regional Performance</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Region</th>
+                                            <th>Revenue</th>
+                                            <th>Orders</th>
+                                            <th>% of Total Revenue</th>
+                                            <th>Avg. Order Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                // Add rows for each region
+                sortedRegions.forEach(item => {
+                    const percentOfTotal = (item.revenue / totalRevenue) * 100;
+                    const avgOrderValue = item.orders > 0 ? item.revenue / item.orders : 0;
+                    
+                    content += `
+                        <tr>
+                            <td>${item.region}</td>
+                            <td>${Utils.formatCurrency(item.revenue)}</td>
+                            <td>${Utils.formatNumber(item.orders)}</td>
+                            <td>${percentOfTotal.toFixed(2)}%</td>
+                            <td>${Utils.formatCurrency(avgOrderValue)}</td>
+                        </tr>
+                    `;
+                });
+                
+                content += `
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Regional Insights</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-2"><strong>Market Leader:</strong> ${sortedRegions[0].region} is the strongest market with ${((sortedRegions[0].revenue / totalRevenue) * 100).toFixed(2)}% of total revenue.</p>
+                                <p class="mb-2"><strong>Growth Markets:</strong> ${sortedRegions[sortedRegions.length - 1].region} shows the highest potential for expansion with increasing conversion rates.</p>
+                                <p class="mb-2"><strong>Market Penetration:</strong> Customer acquisition costs vary significantly by region, with ${sortedRegions[1].region} showing the best ROI on marketing spend.</p>
+                                <p><strong>Recommendations:</strong> Focus expansion efforts on high-growth regions while optimizing operations in mature markets.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Regional Market Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">The geographic distribution analysis reveals several key insights about market performance across regions:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Market Maturity:</strong> ${sortedRegions[0].region} and ${sortedRegions[1].region} are mature markets with stable growth patterns.</li>
+                                <li class="mb-1"><strong>Emerging Markets:</strong> ${sortedRegions[sortedRegions.length - 1].region} shows rapid growth from a smaller base, indicating emerging market potential.</li>
+                                <li class="mb-1"><strong>Seasonal Variations:</strong> Regional performance shows varying seasonal patterns, with northern regions having stronger Q4 performance.</li>
+                                <li class="mb-1"><strong>Product Mix:</strong> Product preferences vary significantly by region, with technology products dominating in ${sortedRegions[0].region} and lifestyle products in ${sortedRegions[1].region}.</li>
+                            </ul>
+                            <p class="mt-2">Analysis suggests opportunities for regionalized marketing campaigns and product offerings tailored to local preferences and buying behaviors.</p>
+                        </div>
+                    </div>
+                `;
+                
+                return content;
+            },
+            
+            /**
+             * Generate acquisition channels drill-down content
+             * @returns {string} HTML content
+             */
+            generateAcquisitionDrillDown: function() {
+                // Get channel data
+                const channelData = AppState.data.channels;
+                if (!channelData || !channelData.length) {
+                    return '<p>No acquisition channel data available.</p>';
+                }
+                
+                // Sort by revenue
+                const sortedChannels = [...channelData].sort((a, b) => b.revenue - a.revenue);
+                
+                // Calculate total revenue for percentages
+                const totalRevenue = sortedChannels.reduce((sum, item) => sum + item.revenue, 0);
+                const totalOrders = sortedChannels.reduce((sum, item) => sum + item.orders, 0);
+                
+                // Generate content
+                let content = `
+                    <div class="grid" style="margin-bottom: 1.5rem;">
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Acquisition Channel Performance</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Channel</th>
+                                            <th>Revenue</th>
+                                            <th>Orders</th>
+                                            <th>% of Total</th>
+                                            <th>Avg. Order Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                // Add rows for each channel
+                sortedChannels.forEach(item => {
+                    const percentOfTotal = (item.revenue / totalRevenue) * 100;
+                    const avgOrderValue = item.orders > 0 ? item.revenue / item.orders : 0;
+                    
+                    content += `
+                        <tr>
+                            <td>${item.channel}</td>
+                            <td>${Utils.formatCurrency(item.revenue)}</td>
+                            <td>${Utils.formatNumber(item.orders)}</td>
+                            <td>${percentOfTotal.toFixed(2)}%</td>
+                            <td>${Utils.formatCurrency(avgOrderValue)}</td>
+                        </tr>
+                    `;
+                });
+                
+                content += `
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Channel Effectiveness</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-2"><strong>Top Channel:</strong> ${sortedChannels[0].channel} generates ${((sortedChannels[0].revenue / totalRevenue) * 100).toFixed(2)}% of total revenue.</p>
+                                <p class="mb-2"><strong>Highest AOV:</strong> ${sortedChannels.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].channel} has the highest average order value at ${Utils.formatCurrency(sortedChannels.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].revenue / sortedChannels.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].orders)}.</p>
+                                <p class="mb-2"><strong>Conversion Rates:</strong> Email marketing shows the highest conversion rate at 4.2%, followed by direct traffic at 3.8%.</p>
+                                <p><strong>Recommendations:</strong> Increase investment in high-performing channels while optimizing underperforming ones.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Channel Attribution Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">Multi-touch attribution analysis reveals the following insights about customer acquisition:</p>
+                            <ul>
+                                <li class="mb-1"><strong>First Touch:</strong> Organic Search and Social Media dominate as initial discovery channels.</li>
+                                <li class="mb-1"><strong>Last Touch:</strong> Direct Traffic and Email Marketing have the highest conversion rates as final touchpoints.</li>
+                                <li class="mb-1"><strong>Assisted Conversions:</strong> Paid Search plays a significant role in the middle of the funnel, assisting conversions that close through other channels.</li>
+                                <li class="mb-1"><strong>Time to Conversion:</strong> Average customer journey spans 3.2 touchpoints over 8.5 days before purchase.</li>
+                            </ul>
+                            <p class="mt-2">The data suggests that an integrated multi-channel approach yields the best results, with different channels serving distinctive roles in the customer journey.</p>
+                        </div>
+                    </div>
+                `;
+                
+                return content;
+            },
+            
+            /**
+             * Generate product performance drill-down content
+             * @returns {string} HTML content
+             */
+            generateProductDrillDown: function() {
+                // Get product data
+                const productData = AppState.data.products;
+                if (!productData || !productData.length) {
+                    return '<p>No product data available.</p>';
+                }
+                
+                // Sort by revenue
+                const sortedProducts = [...productData].sort((a, b) => b.revenue - a.revenue);
+                
+                // Calculate total revenue for percentages
+                const totalRevenue = sortedProducts.reduce((sum, item) => sum + item.revenue, 0);
+                
+                // Generate content
+                let content = `
+                    <div class="grid" style="margin-bottom: 1.5rem;">
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Top Products Performance</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Revenue</th>
+                                            <th>Orders</th>
+                                            <th>% of Total</th>
+                                            <th>Avg. Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                // Add rows for top 10 products
+                sortedProducts.slice(0, 10).forEach(item => {
+                    const percentOfTotal = (item.revenue / totalRevenue) * 100;
+                    const avgPrice = item.orders > 0 ? item.revenue / item.orders : 0;
+                    
+                    content += `
+                        <tr>
+                            <td>${item.product}</td>
+                            <td>${Utils.formatCurrency(item.revenue)}</td>
+                            <td>${Utils.formatNumber(item.orders)}</td>
+                            <td>${percentOfTotal.toFixed(2)}%</td>
+                            <td>${Utils.formatCurrency(avgPrice)}</td>
+                        </tr>
+                    `;
+                });
+                
+                content += `
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Product Insights</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-2"><strong>Top Performer:</strong> ${sortedProducts[0].product} generates ${((sortedProducts[0].revenue / totalRevenue) * 100).toFixed(2)}% of total revenue.</p>
+                                <p class="mb-2"><strong>Best Seller by Volume:</strong> ${sortedProducts.sort((a, b) => b.orders - a.orders)[0].product} with ${Utils.formatNumber(sortedProducts.sort((a, b) => b.orders - a.orders)[0].orders)} units sold.</p>
+                                <p class="mb-2"><strong>Premium Product:</strong> ${sortedProducts.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].product} has the highest average price at ${Utils.formatCurrency(sortedProducts.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].revenue / sortedProducts.sort((a, b) => (b.revenue / b.orders) - (a.revenue / a.orders))[0].orders)}.</p>
+                                <p><strong>Recommendations:</strong> Focus marketing on high-margin products and identify cross-selling opportunities among top performers.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Product Performance Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">Product performance analysis reveals the following insights:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Category Synergy:</strong> Top-performing products often drive sales of complementary items, with 35% of orders containing multiple items from related categories.</li>
+                                <li class="mb-1"><strong>Seasonal Variations:</strong> Product popularity fluctuates seasonally, with technology items peaking in Q4 and lifestyle products in Q2.</li>
+                                <li class="mb-1"><strong>Price Sensitivity:</strong> Analysis shows price elasticity varies significantly by product category, with luxury items showing lower sensitivity.</li>
+                                <li class="mb-1"><strong>Inventory Optimization:</strong> Top 20% of products generate 80% of revenue, suggesting opportunities for inventory rationalization.</li>
+                            </ul>
+                            <p class="mt-2">Data indicates that product bundling strategies and personalized recommendations could significantly increase average order value and customer lifetime value.</p>
+                        </div>
+                    </div>
+                `;
+                
+                return content;
+            },
+            
+            /**
+             * Generate order details drill-down content
+             * @param {Object} order - Order data
+             * @returns {string} HTML content
+             */
+            generateOrderDrillDown: function(order) {
+                if (!order) {
+                    return '<p>No order data available.</p>';
+                }
+                
+                // Generate content
+                let content = `
+                    <div class="grid" style="margin-bottom: 1.5rem;">
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Order Details</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <td>${order.orderId}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Date</th>
+                                            <td>${Utils.formatDate(order.date, 'long')}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <td>${order.customer} (${order.customerSegment === 'vip' ? 'VIP' : order.customerSegment.charAt(0).toUpperCase() + order.customerSegment.slice(1)})</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Product</th>
+                                            <td>${order.product}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Category</th>
+                                            <td>${order.category}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Quantity</th>
+                                            <td>${order.quantity}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Unit Price</th>
+                                            <td>${Utils.formatCurrency(order.unitPrice)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Revenue</th>
+                                            <td>${Utils.formatCurrency(order.revenue)}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Region</th>
+                                            <td>${order.region}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Status</th>
+                                            <td>
+                                                <span class="badge ${order.statusCode === 'completed' ? 'badge-success' : order.statusCode === 'processing' ? 'badge-info' : order.statusCode === 'shipped' ? 'badge-warning' : 'badge-danger'}">
+                                                    ${order.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Acquisition Channel</th>
+                                            <td>${order.channel}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-medium card">
+                            <div class="card-header">
+                                <h3 class="card-title">Customer Purchase History</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-2"><strong>Customer Journey:</strong> First purchase was 187 days ago, with 5 total orders.</p>
+                                <p class="mb-2"><strong>Lifetime Value:</strong> ${Utils.formatCurrency(order.revenue * 5)}</p>
+                                <p class="mb-2"><strong>Purchase Frequency:</strong> Orders approximately every 37 days.</p>
+                                <p><strong>Recommendations:</strong> Customer shows strong affinity for ${order.category}. Consider targeted promotions for similar products.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Related Products</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">Customers who purchased this item also bought:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Product A:</strong> Complementary item with 65% co-purchase rate.</li>
+                                <li class="mb-1"><strong>Product B:</strong> Popular upgrade path with 42% conversion rate.</li>
+                                <li class="mb-1"><strong>Product C:</strong> Frequently purchased as a gift item.</li>
+                            </ul>
+                            <p class="mt-2">Personalized follow-up with this customer could yield high-value repeat purchases based on purchase history and product affinity.</p>
+                        </div>
+                    </div>
+                `;
+                
+                return content;
+            },
+            
+            /**
+             * Export chart data as CSV
+             * @param {string} chartType - Type of chart to export
+             */
+            exportChartData: function(chartType) {
+                let data;
+                let filename;
+                
+                switch (chartType) {
+                    case 'revenue':
+                        data = AppState.data.revenue;
+                        filename = 'revenue_trend_data.csv';
+                        break;
+                    case 'category':
+                        data = AppState.data.categories;
+                        filename = 'category_performance_data.csv';
+                        break;
+                    case 'geo':
+                        data = AppState.data.regions;
+                        filename = 'geographic_distribution_data.csv';
+                        break;
+                    case 'acquisition':
+                        data = AppState.data.channels;
+                        filename = 'acquisition_channel_data.csv';
+                        break;
+                    case 'product':
+                        data = AppState.data.products;
+                        filename = 'product_performance_data.csv';
+                        break;
+                    default:
+                        data = AppState.data.sales;
+                        filename = 'sales_data.csv';
+                }
+                
+                if (!data || !data.length) {
+                    this.showNotification('Export Failed', 'No data available to export.', 'warning');
+                    return;
+                }
+                
+                // Convert data to CSV
+                const headers = Object.keys(data[0]);
+                let csvContent = headers.join(',') + '\n';
+                
+                data.forEach(row => {
+                    const values = headers.map(header => {
+                        const value = row[header];
+                        // Handle date objects and escape commas in strings
+                        if (value instanceof Date) {
+                            return value.toISOString();
+                        } else if (typeof value === 'string' && value.includes(',')) {
+                            return `"${value}"`;
+                        } else {
+                            return value;
+                        }
+                    });
+                    csvContent += values.join(',') + '\n';
+                });
+                
+                // Create a download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showNotification('Export Complete', `Data exported as ${filename}`, 'success');
+            },
+            
+            /**
+             * Export modal data
+             */
+            exportModalData: function() {
+                if (!AppState.selectedData) {
+                    UIService.showNotification('Export Failed', 'No data available to export.', 'warning');
+                    return;
+                }
+                
+                const { type, data } = AppState.selectedData;
+                UIService.exportChartData(type);
+            },
+            
+            /**
+             * Show trend analysis for a chart
+             * @param {string} chartType - Type of chart to analyze
+             */
+            showTrendAnalysis: function(chartType) {
+                let title;
+                let content;
+                
+                switch (chartType) {
+                    case 'revenue':
+                        title = 'Revenue Trend Analysis';
+                        content = `
+                            <p class="mb-2">The revenue trend analysis shows a consistent growth pattern with seasonal variations:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Growth Rate:</strong> 12.8% year-over-year increase in revenue.</li>
+                                <li class="mb-1"><strong>Seasonal Peaks:</strong> Q4 shows 28% higher revenue than other quarters, driven by holiday shopping.</li>
+                                <li class="mb-1"><strong>Weekly Pattern:</strong> Weekends consistently outperform weekdays by 35% on average.</li>
+                                <li class="mb-1"><strong>Monthly Trend:</strong> Positive month-over-month growth for the past 6 months.</li>
+                            </ul>
+                            <p class="mt-2">Forecast projects continued growth with an expected 15% increase over the next quarter.</p>
+                        `;
+                        break;
+                    case 'category':
+                        title = 'Category Trend Analysis';
+                        content = `
+                            <p class="mb-2">Category trend analysis reveals shifting consumer preferences:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Rising Categories:</strong> Electronics and Home & Kitchen showing strongest growth.</li>
+                                <li class="mb-1"><strong>Declining Categories:</strong> Apparel experiencing a slight decline in market share.</li>
+                                <li class="mb-1"><strong>Emerging Trend:</strong> Eco-friendly products growing at 2.5x the rate of conventional alternatives.</li>
+                                <li class="mb-1"><strong>Category Mix:</strong> Product diversification increasing, with top category now representing 32% of sales vs. 41% last year.</li>
+                            </ul>
+                            <p class="mt-2">Recommendation to expand assortment in high-growth categories while optimizing inventory in mature categories.</p>
+                        `;
+                        break;
+                    case 'geo':
+                        title = 'Geographic Trend Analysis';
+                        content = `
+                            <p class="mb-2">Geographic trend analysis shows regional shifts in market penetration:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Fastest Growing Region:</strong> Asia Pacific with 22% YoY growth.</li>
+                                <li class="mb-1"><strong>Market Saturation:</strong> North America showing signs of maturity with 7% growth.</li>
+                                <li class="mb-1"><strong>Emerging Markets:</strong> Latin America expanding rapidly from a smaller base.</li>
+                                <li class="mb-1"><strong>Regional Preferences:</strong> Significant variations in product preferences and price sensitivity by region.</li>
+                            </ul>
+                            <p class="mt-2">Strategic expansion into emerging markets recommended while focusing on customer retention in mature markets.</p>
+                        `;
+                        break;
+                    case 'acquisition':
+                        title = 'Acquisition Channel Trend Analysis';
+                        content = `
+                            <p class="mb-2">Acquisition channel analysis shows evolving effectiveness of marketing channels:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Channel Shift:</strong> Social media effectiveness increased by 45% while traditional paid search decreased by 8%.</li>
+                                <li class="mb-1"><strong>Cost Efficiency:</strong> Email marketing delivers highest ROI at 4.2x spend.</li>
+                                <li class="mb-1"><strong>Emerging Channels:</strong> Influencer marketing growing rapidly as an acquisition source.</li>
+                                <li class="mb-1"><strong>Attribution Trends:</strong> Average customer journey now includes 3.2 touchpoints before conversion, up from 2.7 last year.</li>
+                            </ul>
+                            <p class="mt-2">Recommended reallocation of marketing budget to high-performing channels and optimization of multi-touch attribution.</p>
+                        `;
+                        break;
+                    case 'product':
+                        title = 'Product Trend Analysis';
+                        content = `
+                            <p class="mb-2">Product trend analysis reveals changing customer preferences:</p>
+                            <ul>
+                                <li class="mb-1"><strong>Product Lifecycle:</strong> 35% of top products were introduced within the last 6 months.</li>
+                                <li class="mb-1"><strong>Price Trends:</strong> Premium products growing at 1.7x the rate of economy options.</li>
+                                <li class="mb-1"><strong>Feature Preference:</strong> Sustainability and smart features increasingly driving purchase decisions.</li>
+                                <li class="mb-1"><strong>Bundling Effect:</strong> Product bundles show 28% higher conversion rate than individual items.</li>
+                            </ul>
+                            <p class="mt-2">Product development roadmap should prioritize premium, sustainable options with smart features to capitalize on trends.</p>
+                        `;
+                        break;
+                    default:
+                        title = 'Trend Analysis';
+                        content = '<p>No trend analysis available for this dataset.</p>';
+                }
+                
+                // Show notification with analysis
+                const modal = document.getElementById('drill-down-modal');
+                const modalTitle = document.getElementById('drill-down-title');
+                const modalContent = document.getElementById('drill-down-content');
+                
+                modalTitle.textContent = title;
+                modalContent.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Trend Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+            },
+            
+            /**
+             * Show share options
+             * @param {string} chartType - Type of chart to share
+             */
+            showShareOptions: function(chartType) {
+                const title = `Share ${chartType.charAt(0).toUpperCase() + chartType.slice(1)} Chart`;
+                const content = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Share Options</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">Choose how you'd like to share this data:</p>
+                            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-envelope" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    Email
+                                </button>
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    PDF Report
+                                </button>
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-link" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    Copy Link
+                                </button>
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-calendar" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    Schedule Report
+                                </button>
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-file-excel" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    Export Excel
+                                </button>
+                                <button class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                                    <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                    Share with Team
+                                </button>
+                            </div>
+                            <p class="mt-2">Note: Shared data will respect current filter settings.</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Show modal with share options
+                const modal = document.getElementById('drill-down-modal');
+                const modalTitle = document.getElementById('drill-down-title');
+                const modalContent = document.getElementById('drill-down-content');
+                
+                modalTitle.textContent = title;
+                modalContent.innerHTML = content;
+                
+                // Add click events to buttons (for demo)
+                modalContent.querySelectorAll('.btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        UIService.showNotification('Share Feature', 'Sharing functionality would be implemented in a production environment.', 'info');
+                        UIService.closeModal();
+                    });
+                });
+                
+                modal.classList.add('active');
+            },
+            
+            /**
+             * Toggle table filters
+             */
+            toggleTableFilters: function() {
+                // This would show additional table filters in a production environment
+                UIService.showNotification('Table Filters', 'Advanced table filtering would be implemented in a production environment.', 'info');
+            },
+            
+            /**
+             * Handle filter change
+             * @param {Event} e - Change event
+             */
+            handleFilterChange: function(e) {
+                const filter = e.target.id;
+                const value = e.target.value;
+                
+                switch (filter) {
+                    case 'date-range':
+                        AppState.filters.dateRange = value;
+                        break;
+                    case 'region-filter':
+                        AppState.filters.region = value;
+                        break;
+                    case 'product-filter':
+                        AppState.filters.product = value;
+                        break;
+                    case 'customer-filter':
+                        AppState.filters.customer = value;
+                        break;
+                }
+                
+                // Apply filters and update dashboard
+                UIService.showLoading(true);
+                
+                setTimeout(() => {
+                    // Filter data
+                    const filteredData = DataService.filterData(AppState.data.sales);
+                    
+                    // Process data for charts
+                    const chartData = DataService.processDataForCharts(filteredData);
+                    
+                    // Calculate KPIs
+                    const kpis = DataService.calculateKPIs(filteredData);
+                    
+                    // Update state
+                    AppState.data.revenue = chartData.revenueTrend;
+                    AppState.data.categories = chartData.salesByCategory;
+                    AppState.data.regions = chartData.salesByRegion;
+                    AppState.data.channels = chartData.salesByChannel;
+                    AppState.data.products = chartData.topProducts;
+                    
+                    // Update UI components
+                    ChartService.updateCharts(chartData);
+                    UIService.updateKPICards(kpis);
+                    UIService.populateDataTable(filteredData);
+                    
+                    UIService.showLoading(false);
+                    UIService.showNotification('Filters Applied', 'Dashboard updated with new filter settings.', 'success');
+                }, 500);
+            },
+            
+            /**
+             * Handle export button click
+             */
+            handleExport: function() {
+                const options = [
+                    { id: 'export-csv', label: 'CSV', icon: 'fa-file-csv' },
+                    { id: 'export-excel', label: 'Excel', icon: 'fa-file-excel' },
+                    { id: 'export-pdf', label: 'PDF', icon: 'fa-file-pdf' },
+                    { id: 'export-image', label: 'Image', icon: 'fa-file-image' }
+                ];
+                
+                // Show export options
+                const modal = document.getElementById('drill-down-modal');
+                const modalTitle = document.getElementById('drill-down-title');
+                const modalContent = document.getElementById('drill-down-content');
+                
+                modalTitle.textContent = 'Export Dashboard';
+                
+                let content = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Export Options</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">Choose export format:</p>
+                            <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                `;
+                
+                options.forEach(option => {
+                    content += `
+                        <button id="${option.id}" class="btn btn-primary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
+                            <i class="fas ${option.icon}" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                            ${option.label}
+                        </button>
+                    `;
+                });
+                
+                content += `
+                            </div>
+                            <div class="mt-3">
+                                <h4 class="mb-1">Export Settings</h4>
+                                <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                    <div>
+                                        <label class="filter-label" for="export-data">Data to Export</label>
+                                        <select class="filter-select" id="export-data">
+                                            <option value="all" selected>All Dashboard Data</option>
+                                            <option value="revenue">Revenue Chart Only</option>
+                                            <option value="categories">Categories Chart Only</option>
+                                            <option value="geo">Geographic Chart Only</option>
+                                            <option value="channels">Acquisition Channels Only</option>
+                                            <option value="products">Products Chart Only</option>
+                                            <option value="table">Data Table Only</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="filter-label" for="export-format">Paper Size</label>
+                                        <select class="filter-select" id="export-format">
+                                            <option value="a4" selected>A4</option>
+                                            <option value="letter">Letter</option>
+                                            <option value="legal">Legal</option>
+                                            <option value="tabloid">Tabloid/Ledger</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                modalContent.innerHTML = content;
+                
+                // Add click events to export buttons
+                options.forEach(option => {
+                    document.getElementById(option.id).addEventListener('click', () => {
+                        const dataType = document.getElementById('export-data').value;
+                        UIService.showNotification('Export Started', `Exporting ${dataType} data as ${option.label}...`, 'info');
+                        
+                        // Simulate export
+                        setTimeout(() => {
+                            UIService.showNotification('Export Complete', `${option.label} export finished successfully.`, 'success');
+                            UIService.closeModal();
+                        }, 1500);
+                    });
+                });
+                
+                modal.classList.add('active');
+            },
+            
+            /**
+             * Handle refresh button click
+             */
+            handleRefresh: function() {
+                UIService.showLoading(true);
+                
+                // Simulate data refresh
+                setTimeout(() => {
+                    // Re-initialize with slightly different data
+                    AppState.data.sales = DataService.generateSalesData(200);
+                    const filteredData = DataService.filterData(AppState.data.sales);
+                    const chartData = DataService.processDataForCharts(filteredData);
+                    const kpis = DataService.calculateKPIs(filteredData);
+                    
+                    // Update state
+                    AppState.data.revenue = chartData.revenueTrend;
+                    AppState.data.categories = chartData.salesByCategory;
+                    AppState.data.regions = chartData.salesByRegion;
+                    AppState.data.channels = chartData.salesByChannel;
+                    AppState.data.products = chartData.topProducts;
+                    
+                    // Update UI
+                    ChartService.updateCharts(chartData);
+                    UIService.updateKPICards(kpis);
+                    UIService.populateDataTable(filteredData);
+                    
+                    UIService.showLoading(false);
+                    UIService.showNotification('Data Refreshed', 'Dashboard updated with latest data.', 'success');
+                }, 1000);
+            },
+            
+            /**
+             * Handle table row click for drill-down
+             * @param {Event} e - Click event
+             */
+            handleTableRowClick: function(e) {
+                const row = e.target.closest('tr');
+                if (!row) return;
+                
+                const orderId = row.dataset.orderId;
+                if (!orderId) return;
+                
+                // Find order data
+                const order = AppState.data.sales.find(item => item.orderId === orderId);
+                if (!order) return;
+                
+                // Show drill-down
+                UIService.showDrillDown('order', order);
+            },
+            
+            /**
+             * Update KPI cards with new data
+             * @param {Object} kpis - KPI data
+             */
+            updateKPICards: function(kpis) {
+                if (!kpis) return;
+                
+                // Revenue KPI
+                document.querySelector('.kpi-cards .kpi-card:nth-child(1) .kpi-value').textContent = Utils.formatCurrency(kpis.current.revenue);
+                const revenueChange = document.querySelector('.kpi-cards .kpi-card:nth-child(1) .kpi-change');
+                revenueChange.innerHTML = `
+                    <i class="fas fa-arrow-${kpis.change.revenue >= 0 ? 'up' : 'down'}"></i>
+                    <span>${Math.abs(kpis.change.revenue).toFixed(1)}% vs prev period</span>
+                `;
+                revenueChange.className = `kpi-change ${kpis.change.revenue >= 0 ? 'positive' : 'negative'}`;
+                
+                // Orders KPI
+                document.querySelector('.kpi-cards .kpi-card:nth-child(2) .kpi-value').textContent = Utils.formatNumber(kpis.current.orders);
+                const ordersChange = document.querySelector('.kpi-cards .kpi-card:nth-child(2) .kpi-change');
+                ordersChange.innerHTML = `
+                    <i class="fas fa-arrow-${kpis.change.orders >= 0 ? 'up' : 'down'}"></i>
+                    <span>${Math.abs(kpis.change.orders).toFixed(1)}% vs prev period</span>
+                `;
+                ordersChange.className = `kpi-change ${kpis.change.orders >= 0 ? 'positive' : 'negative'}`;
+                
+                // Conversion Rate KPI
+                document.querySelector('.kpi-cards .kpi-card:nth-child(3) .kpi-value').textContent = kpis.current.conversionRate.toFixed(1) + '%';
+                const conversionChange = document.querySelector('.kpi-cards .kpi-card:nth-child(3) .kpi-change');
+                conversionChange.innerHTML = `
+                    <i class="fas fa-arrow-${kpis.change.conversionRate >= 0 ? 'up' : 'down'}"></i>
+                    <span>${Math.abs(kpis.change.conversionRate).toFixed(1)}% vs prev period</span>
+                `;
+                conversionChange.className = `kpi-change ${kpis.change.conversionRate >= 0 ? 'positive' : 'negative'}`;
+                
+                // AOV KPI
+                document.querySelector('.kpi-cards .kpi-card:nth-child(4) .kpi-value').textContent = Utils.formatCurrency(kpis.current.aov);
+                const aovChange = document.querySelector('.kpi-cards .kpi-card:nth-child(4) .kpi-change');
+                aovChange.innerHTML = `
+                    <i class="fas fa-arrow-${kpis.change.aov >= 0 ? 'up' : 'down'}"></i>
+                    <span>${Math.abs(kpis.change.aov).toFixed(1)}% vs prev period</span>
+                `;
+                aovChange.className = `kpi-change ${kpis.change.aov >= 0 ? 'positive' : 'negative'}`;
+            },
+            
+            /**
+             * Populate KPI cards with initial data
+             */
+            populateKPICards: function() {
+                // Get filtered data
+                const filteredData = DataService.filterData(AppState.data.sales);
+                
+                // Calculate KPIs
+                const kpis = DataService.calculateKPIs(filteredData);
+                
+                // Update KPI cards
+                this.updateKPICards(kpis);
+            },
+            
+            /**
+             * Populate data table with sales data
+             * @param {Array} data - Sales data to display
+             */
+            populateDataTable: function(data = null) {
+                const tableBody = document.querySelector('#sales-table tbody');
+                const salesData = data || DataService.filterData(AppState.data.sales);
+                
+                // Clear existing rows
+                tableBody.innerHTML = '';
+                
+                // Add rows (limit to 20 for demo)
+                const rowsToShow = salesData.slice(0, 20);
+                
+                rowsToShow.forEach(sale => {
+                    const row = document.createElement('tr');
+                    row.dataset.orderId = sale.orderId;
+                    
+                    row.innerHTML = `
+                        <td>${sale.orderId}</td>
+                        <td>${Utils.formatDate(sale.date, 'medium')}</td>
+                        <td>${sale.customer}</td>
+                        <td>${sale.region}</td>
+                        <td>${sale.product}</td>
+                        <td>${sale.category}</td>
+                        <td class="align-right">${Utils.formatCurrency(sale.revenue)}</td>
+                        <td>
+                            <span class="badge ${sale.statusCode === 'completed' ? 'badge-success' : sale.statusCode === 'processing' ? 'badge-info' : sale.statusCode === 'shipped' ? 'badge-warning' : 'badge-danger'}">
+                                ${sale.status}
+                            </span>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+        };
+
+        /**
+         * Main Application
+         * Orchestrates initialization and provides public API
+         */
+        const DashboardApp = {
+            /**
+             * Initialize the dashboard application
+             */
+            init: function() {
+                // Show loading overlay
+                UIService.showLoading(true);
+                
+                // Generate mock data
+                AppState.data.sales = DataService.generateSalesData(200);
+                
+                // Filter data based on initial filters
+                const filteredData = DataService.filterData(AppState.data.sales);
+                
+                // Process data for charts
+                const chartData = DataService.processDataForCharts(filteredData);
+                
+                // Store processed data
+                AppState.data.revenue = chartData.revenueTrend;
+                AppState.data.categories = chartData.salesByCategory;
+                AppState.data.regions = chartData.salesByRegion;
+                AppState.data.channels = chartData.salesByChannel;
+                AppState.data.products = chartData.topProducts;
+                
+                // Initialize charts
+                ChartService.initCharts(chartData);
+                
+                // Initialize UI components
+                UIService.init();
+                
+                // Hide loading overlay
+                setTimeout(() => {
+                    UIService.showLoading(false);
+                    
+                    // Show welcome notification
+                    UIService.showNotification(
+                        'Dashboard Loaded', 
+                        'Welcome to the Business Analytics Dashboard. Use filters to explore your data.', 
+                        'info'
+                    );
+                    
+                    AppState.initialized = true;
+                }, 1000);
+            },
+            
+            /**
+             * Reset the dashboard to initial state
+             */
+            reset: function() {
+                // Reset filters
+                AppState.filters = {
+                    dateRange: '30d',
+                    region: 'all',
+                    product: 'all',
+                    customer: 'all',
+                    customDateStart: null,
+                    customDateEnd: null
+                };
+                
+                // Reset UI filters
+                document.getElementById('date-range').value = '30d';
+                document.getElementById('region-filter').value = 'all';
+                document.getElementById('product-filter').value = 'all';
+                document.getElementById('customer-filter').value = 'all';
+                
+                // Re-initialize
+                this.init();
+            },
+            
+            /**
+             * Get current dashboard state
+             * @returns {Object} Current state
+             */
+            getState: function() {
+                return Utils.deepClone(AppState);
+            }
+        };
+
+        // Initialize the dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            DashboardApp.init();
+        });
+    </script>
+</body>
+</html>

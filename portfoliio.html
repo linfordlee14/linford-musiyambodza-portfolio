@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linford Lee | Web Developer, Data Analyst & Cybersecurity Analyst</title>
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* ===== ROOT VARIABLES & THEME ===== */
+    :root {
+      --primary-hue: 260; /* Purple */
+      --primary-color: hsl(var(--primary-hue), 80%, 60%);
+      --primary-light: hsl(var(--primary-hue), 80%, 85%);
+      --primary-dark: hsl(var(--primary-hue), 80%, 40%);
+      
+      --secondary-hue: 190; /* Teal */
+      --secondary-color: hsl(var(--secondary-hue), 75%, 55%);
+      --secondary-light: hsl(var(--secondary-hue), 75%, 80%);
+      --secondary-dark: hsl(var(--secondary-hue), 75%, 35%);
+      
+      --accent-hue: 340; /* Pink */
+      --accent-color: hsl(var(--accent-hue), 80%, 65%);
+      
+      /* RGB values */
+      --primary-rgb: 138, 94, 255;
+      --secondary-rgb: 60, 188, 207;
+      --accent-rgb: 255, 94, 146;
+      
+      /* Light theme colors */
+      --bg-color-light: #f8faff;
+      --bg-light-gradient-1: #ffffff;
+      --bg-light-gradient-2: #f3f6ff;
+      --text-primary-light: #2a2a3c;
+      --text-secondary-light: #5a5a72;
+      --card-bg-light: #ffffff;
+      --border-light: rgba(0, 0, 0, 0.08);
+      --shadow-light: 0 8px 30px rgba(0, 0, 0, 0.05);
+      --shadow-light-hover: 0 15px 40px rgba(0, 0, 0, 0.08);
+      
+      /* Dark theme colors */
+      --bg-color-dark: #121420;
+      --bg-dark-gradient-1: #1a1b2e;
+      --bg-dark-gradient-2: #121420;
+      --text-primary-dark: #f0f0ff;
+      --text-secondary-dark: #b0b0c8;
+      --card-bg-dark: #1c1d2f;
+      --border-dark: rgba(255, 255, 255, 0.1);
+      --shadow-dark: 0 8px 30px rgba(0, 0, 0, 0.25);
+      --shadow-dark-hover: 0 15px 40px rgba(0, 0, 0, 0.35);
+      
+      /* Border radius & transitions */
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --border-radius-xl: 30px;
+      
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-slow: 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+      
+      --font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    }
+    [data-theme="light"] {
+      --bg-color: var(--bg-color-light);
+      --bg-gradient-1: var(--bg-light-gradient-1);
+      --bg-gradient-2: var(--bg-light-gradient-2);
+      --text-primary: var(--text-primary-light);
+      --text-secondary: var(--text-secondary-light);
+      --card-bg: var(--card-bg-light);
+      --border-color: var(--border-light);
+      --shadow: var(--shadow-light);
+      --shadow-hover: var(--shadow-light-hover);
+    }
+    [data-theme="dark"] {
+      --bg-color: var(--bg-color-dark);
+      --bg-gradient-1: var(--bg-dark-gradient-1);
+      --bg-gradient-2: var(--bg-dark-gradient-2);
+      --text-primary: var(--text-primary-dark);
+      --text-secondary: var(--text-secondary-dark);
+      --card-bg: var(--card-bg-dark);
+      --border-color: var(--border-dark);
+      --shadow: var(--shadow-dark);
+      --shadow-hover: var(--shadow-dark-hover);
+    }
+    
+    /* ===== GLOBAL STYLES ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+    body {
+      font-family: var(--font-family);
+      background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background var(--transition-medium), color var(--transition-medium);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    ::selection {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    a:hover, a:focus {
+      color: var(--primary-dark);
+    }
+    a:focus-visible {
+      outline: 2px dashed var(--accent-color);
+      outline-offset: 3px;
+    }
+    
+    /* ===== THEME TOGGLE BUTTON ===== */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--card-bg);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .theme-toggle i {
+      font-size: 1.5rem;
+      transition: opacity 0.3s;
+    }
+    .theme-toggle .fa-sun {
+      opacity: 0;
+    }
+    [data-theme="dark"] .theme-toggle .fa-sun {
+      opacity: 1;
+    }
+    [data-theme="dark"] .theme-toggle .fa-moon {
+      opacity: 0;
+    }
+    
+    /* ===== CONTAINER & TYPOGRAPHY ===== */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      font-size: clamp(2rem, 4vw, 2.5rem);
+    }
+    h3 {
+      font-size: clamp(1.5rem, 3vw, 1.8rem);
+    }
+    p {
+      margin-bottom: 1.5rem;
+    }
+    .highlight {
+      color: var(--primary-color);
+      position: relative;
+      display: inline-block;
+    }
+    .highlight::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 0.2em;
+      bottom: 0.1em;
+      left: 0;
+      background-color: var(--primary-light);
+      z-index: -1;
+      transform-origin: bottom;
+      transform: scaleY(0.3);
+      transition: transform var(--transition-medium);
+    }
+    .highlight:hover::after {
+      transform: scaleY(1);
+    }
+    
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: rgba(var(--bg-gradient-1), 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 50;
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+    }
+    .navbar.scrolled {
+      box-shadow: var(--shadow);
+      background-color: rgba(var(--card-bg), 0.9);
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-logo i {
+      color: var(--primary-color);
+      transition: transform var(--transition-fast);
+    }
+    .nav-logo:hover i {
+      transform: rotate(-15deg);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-link {
+      color: var(--text-primary);
+      font-weight: 500;
+      padding: 0.5rem;
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-color);
+      bottom: 0;
+      left: 0;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform var(--transition-medium);
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary-color);
+    }
+    .nav-link:hover::after, .nav-link.active::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .mobile-toggle {
+      display: flex;
+      flex-direction: column;
+      width: 30px;
+      cursor: pointer;
+      z-index: 100;
+    }
+    .mobile-toggle span {
+      height: 3px;
+      width: 100%;
+      background-color: var(--text-primary);
+      margin: 3px 0;
+      border-radius: 3px;
+      transition: transform var(--transition-medium), opacity var(--transition-medium);
+    }
+    .mobile-toggle.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+    .mobile-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .mobile-toggle.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+    @media (min-width: 769px) {
+      .mobile-toggle { display: none; }
+    }
+    
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+      border: none;
+      outline: none;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:focus-visible {
+      outline: 2px dashed var(--accent-color);
+      outline-offset: 2px;
+    }
+    .primary-btn {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+    }
+    .primary-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4);
+      background-color: var(--primary-dark);
+    }
+    .secondary-btn {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--primary-color);
+    }
+    .secondary-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.8s, opacity 0.8s;
+      pointer-events: none;
+    }
+    .btn:active::after {
+      transform: translate(-50%, -50%) scale(3);
+      opacity: 0;
+      transition: 0s;
+    }
+    
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 100px 0 4rem;
+    }
+    .hero-content {
+      z-index: 2;
+      text-align: center;
+      position: relative;
+    }
+    .profile-image-container {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 2.5rem;
+      position: relative;
+    }
+    .profile-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--card-bg);
+      transition: transform var(--transition-medium);
+      box-shadow: var(--shadow);
+    }
+    .profile-image-container:hover .profile-image {
+      transform: scale(1.05);
+    }
+    .profile-ring {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border-radius: 50%;
+      border: 2px dashed var(--primary-light);
+      animation: rotate 20s linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .profession {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    .hero-description {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      color: var(--text-secondary);
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .floating-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .shape {
+      position: absolute;
+      opacity: 0.12;
+      animation: float 15s ease-in-out infinite alternate;
+    }
+    .shape-1 {
+      top: 20%;
+      left: 10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    }
+    .shape-2 {
+      bottom: 10%;
+      right: 15%;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+      animation-delay: 2s;
+    }
+    .shape-3 {
+      top: 40%;
+      right: 25%;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+      animation-delay: 4s;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-15px, 15px) scale(1.05); }
+      100% { transform: translate(15px, -15px) scale(0.95); }
+    }
+    
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 5rem 0;
+      position: relative;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .section-line {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      margin: 1rem auto 1.5rem;
+      border-radius: 2px;
+    }
+    .section-description {
+      max-width: 700px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+    }
+    
+    /* ===== ABOUT SECTION ===== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--text-secondary);
+    }
+    .skills-card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition-medium), box-shadow var(--transition-medium), background-color var(--transition-medium);
+    }
+    .skills-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+    .skills-card h3 {
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .skills-list {
+      list-style-type: none;
+    }
+    .skills-list li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .skill-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      margin-right: 1rem;
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 50%;
+      transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    }
+    .skills-list li:hover .skill-icon {
+      transform: scale(1.1) rotate(10deg);
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* ===== PROJECTS SECTION ===== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .project-card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition-medium), box-shadow var(--transition-medium), background-color var(--transition-medium);
+    }
+    .project-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+    .project-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(var(--primary-rgb), 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--transition-medium);
+    }
+    .project-card:hover .project-overlay {
+      opacity: 1;
+    }
+    .project-links {
+      display: flex;
+      gap: 1rem;
+    }
+    .project-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      color: var(--primary-color);
+      border-radius: 50%;
+      transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    }
+    .project-link:hover {
+      transform: translateY(-5px);
+      background-color: var(--primary-dark);
+      color: white;
+    }
+    .project-info {
+      padding: 1.5rem;
+    }
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .tech-tag {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 30px;
+      transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    }
+    .tech-tag:hover {
+      transform: translateY(-2px);
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* ===== CONTACT SECTION ===== */
+    .contact-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .contact-info {
+      color: var(--text-secondary);
+    }
+    .contact-list {
+      list-style-type: none;
+      margin: 2rem 0;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .contact-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      margin-right: 1rem;
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      border-radius: 50%;
+      transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    }
+    .contact-item:hover .contact-icon {
+      transform: scale(1.1) rotate(10deg);
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .contact-form {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition-medium), box-shadow var(--transition-medium), background-color var(--transition-medium);
+    }
+    .contact-form:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    }
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    /* ===== FOOTER ===== */
+    .footer {
+      background-color: var(--card-bg);
+      padding: 3rem 0;
+      margin-top: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .footer-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .footer-logo {
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-logo i {
+      color: var(--primary-color);
+    }
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      border-radius: 50%;
+      transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    }
+    .social-link:hover {
+      transform: translateY(-5px);
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .footer-nav {
+      margin: 1.5rem 0;
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-link {
+      color: var(--text-secondary);
+      transition: color var(--transition-fast);
+    }
+    .footer-link:hover {
+      color: var(--primary-color);
+    }
+    .copyright {
+      color: var(--text-secondary);
+      margin-top: 1.5rem;
+    }
+    .footer-wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath fill='%238A5EFF' opacity='0.1' d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z'%3E%3C/path%3E%3C/svg%3E");
+      background-size: cover;
+      transform: rotate(180deg);
+    }
+    
+    /* ===== BACK TO TOP BUTTON ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      border: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: opacity var(--transition-medium), visibility var(--transition-medium), transform var(--transition-medium), background-color var(--transition-fast);
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .back-to-top:hover {
+      background-color: var(--primary-dark);
+    }
+    .back-to-top:focus-visible {
+      outline: 2px dashed var(--accent-color);
+      outline-offset: 2px;
+    }
+    
+    /* ===== VERTEX NETWORK EFFECT CANVAS ===== */
+    .effect-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    /* Only the vertex network canvas is used */
+    #vertexNetwork { z-index: -1; }
+  </style>
+</head>
+<body>
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" aria-label="Toggle dark/light mode">
+    <i class="fas fa-moon"></i>
+    <i class="fas fa-sun"></i>
+  </button>
+  
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress"></div>
+  
+  <!-- Vertex Network Effect Canvas -->
+  <canvas id="vertexNetwork" class="effect-canvas"></canvas>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="nav-logo">
+        <i class="fas fa-code"></i>
+        <span>Linford Lee</span>
+      </a>
+      <div class="mobile-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="profile-image-container">
+          <img src="iamages/profile-image.jpg" alt="Profile" class="profile-image">
+          <div class="profile-ring"></div>
+        </div>
+        <p class="profession">Web Developer, Data Analyst &amp; Cybersecurity Analyst</p>
+        <h1 class="glitch-effect" data-text="Hi, I'm Linford Lee">
+          Hi, I'm <span class="highlight">Linford Lee</span>
+        </h1>
+        <p class="hero-description">
+          Based in Cape Town, I specialize in data analysis, business intelligence, and cybersecurity to help businesses make smarter decisions and secure their digital presence.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn primary-btn glitch-btn" data-text="View My Work">View My Work</a>
+          <a href="#contact" class="btn secondary-btn glitch-btn" data-text="Get In Touch">Get In Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- About Section -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <h2>About Me</h2>
+        <div class="section-line"></div>
+        <p class="section-description">
+          I'm a passionate developer who loves creating beautiful digital experiences that are both functional and visually appealing.
+        </p>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            👋 Hi, I'm Linford Lee! I am a Cybersecurity Enthusiast, Data Analyst, and Web Developer based in Cape Town.
+            With a passion for solving complex problems, I specialize in data analysis, business intelligence, and cybersecurity
+            to help businesses make smarter decisions and secure their digital presence.
+          </p>
+          <p>
+            💡 <strong>What I Do:</strong> I have experience working with SQL, Python, Excel, Power BI, and Tableau to turn raw data into meaningful insights.
+            I also have a strong background in web development and IT consulting, where I design and build responsive websites.
+            My cybersecurity expertise helps me secure systems and protect data from cyber threats.
+          </p>
+          <p>
+            🏆 <strong>Experience &amp; Achievements:</strong> I completed the Data Science Program at ALX Africa, mastering data analytics, business intelligence,
+            and visualization. I'm also the Founder &amp; CEO of Linfy Tech Solutions, an IT consulting firm providing web development, cybersecurity,
+            and data analytics services.
+          </p>
+          <p>
+            🎯 <strong>My Motivation &amp; Goals:</strong> I thrive on challenges and believe that technology can transform industries and improve lives.
+            My goal is to use data and cybersecurity to create impactful solutions for businesses and communities.
+            I'm also deeply interested in wildlife conservation, particularly using data analytics to protect Black Rhinos.
+          </p>
+        </div>
+        <div class="skills-card">
+          <h3>Core Skills</h3>
+          <ul class="skills-list">
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-code"></i>
+              </div>
+              <span>Web Development (HTML, CSS, JS)</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-database"></i>
+              </div>
+              <span>SQL &amp; Database Management</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-brands fa-python"></i>
+              </div>
+              <span>Python for Data Analysis</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-chart-simple"></i>
+              </div>
+              <span>Business Intelligence (Power BI, Tableau)</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <span>Cybersecurity Principles</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+              <span>Data Visualization</span>
+            </li>
+            <li>
+              <div class="skill-icon">
+                <i class="fa-solid fa-file-excel"></i>
+              </div>
+              <span>Advanced Excel</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Projects Section -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Projects</h2>
+        <div class="section-line"></div>
+        <p class="section-description">
+          Here are some of my recent projects. Each one was carefully crafted with attention to detail and clean code.
+        </p>
+      </div>
+      <div class="projects-grid">
+        <!-- Project 1: Survey Form -->
+        <div class="project-card">
+          <div class="project-image project-image-placeholder color-1">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="survey-form.html" class="project-link">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>Survey Form</h3>
+            <p>
+              A survey form developed for Linfy Tech Solutions allowing customers to provide valuable feedback on services.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">HTML</span>
+              <span class="tech-tag">CSS</span>
+              <span class="tech-tag">JavaScript</span>
+              <span class="tech-tag">Form Validation</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 2: Personal Finance Tracker -->
+        <div class="project-card">
+          <div class="project-image project-image-placeholder color-2">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="https://github.com/linfordlee14/Personal_Finance_Tracer.git" target="_blank" class="project-link">
+                  <i class="fab fa-github"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>Personal Finance Tracker</h3>
+            <p>
+              A Python-based application using Jupyter Notebook to track personal income and expenses, saving the data to a CSV file for analysis.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">Jupyter</span>
+              <span class="tech-tag">Data Analysis</span>
+              <span class="tech-tag">CSV</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 3: Data Analytics Dashboard -->
+        <div class="project-card">
+          <div class="project-image project-image-placeholder color-3">
+            <div class="project-overlay">
+              <div class="project-links">
+                <a href="dashboard.html" class="project-link">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>Data Analytics Dashboard</h3>
+            <p>
+              An interactive dashboard for visualizing and analyzing business metrics and KPIs with filtering and drill-down capabilities.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">Power BI</span>
+              <span class="tech-tag">SQL</span>
+              <span class="tech-tag">Data Visualization</span>
+              <span class="tech-tag">Business Intelligence</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Contact Section -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2>Get In Touch</h2>
+        <div class="section-line"></div>
+        <p class="section-description">
+          Have a project in mind or want to collaborate? Feel free to reach out!
+        </p>
+      </div>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>Contact Information</h3>
+          <p>
+            I'm currently available for freelance work and open to discussing new projects or opportunities.
+          </p>
+          <ul class="contact-list">
+            <li class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <span>linfordlee14@gmail.com</span>
+            </li>
+            <li class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <span>Cape Town, South Africa</span>
+            </li>
+            <li class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <span>Founder &amp; CEO, Linfy Tech Solutions</span>
+            </li>
+          </ul>
+        </div>
+        <form class="contact-form">
+          <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" class="form-control" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="message" class="form-label">Message</label>
+            <textarea id="message" class="form-control" placeholder="How can I help you?" required></textarea>
+          </div>
+          <button type="submit" class="btn primary-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-wave"></div>
+    <div class="container footer-content">
+      <a href="#" class="footer-logo">
+        <i class="fas fa-code"></i>
+        <span>Linford Lee</span>
+      </a>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/linfordlee14/" target="_blank" class="social-link" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/linfordlee14" target="_blank" class="social-link" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=100084779703710" target="_blank" class="social-link" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="mailto:linfordlee14@gmail.com" class="social-link" aria-label="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-links">
+          <a href="#about" class="footer-link">About</a>
+          <a href="#projects" class="footer-link">Projects</a>
+          <a href="#contact" class="footer-link">Contact</a>
+        </div>
+      </nav>
+      <p class="copyright">
+        &copy; <span id="currentYear"></span> Linford Lee. Driven by technology, guided by service. All rights reserved.
+      </p>
+    </div>
+  </footer>
+  
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+  
+  <!-- JavaScript -->
+  <script>
+    // Set current year in footer
+    const year = new Date().getFullYear();
+    document.getElementById('currentYear').textContent = year;
+    
+    // Dark/Light mode toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Scroll Progress & Navbar Shadow
+    const scrollProgress = document.querySelector('.scroll-progress');
+    const backToTop = document.getElementById('backToTop');
+    const navbar = document.querySelector('.navbar');
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    window.addEventListener('scroll', () => {
+      const totalScroll = document.body.scrollHeight - window.innerHeight;
+      const scrollPosition = window.scrollY;
+      const scrolled = (scrollPosition / totalScroll) * 100;
+      scrollProgress.style.width = `${scrolled}%`;
+      
+      if (scrollPosition > 600) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+      
+      if (scrollPosition > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+    
+    // Back to Top Button
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Mobile Menu Toggle
+    mobileToggle.addEventListener('click', () => {
+      mobileToggle.classList.toggle('active');
+      navLinks.classList.toggle('active');
+    });
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+      });
+    });
+    
+    /* ===== VERTEX NETWORK EFFECT ===== */
+    function createVertexNetworkEffect() {
+      const canvas = document.getElementById('vertexNetwork');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const vertices = [];
+      const numVertices = 50;
+      for (let i = 0; i < numVertices; i++) {
+        vertices.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5
+        });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        vertices.forEach(v => {
+          v.x += v.vx;
+          v.y += v.vy;
+          if (v.x < 0 || v.x > canvas.width) v.vx *= -1;
+          if (v.y < 0 || v.y > canvas.height) v.vy *= -1;
+        });
+        ctx.fillStyle = 'rgba(138, 94, 255, 0.8)';
+        vertices.forEach(v => {
+          ctx.beginPath();
+          ctx.arc(v.x, v.y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        for (let i = 0; i < vertices.length; i++) {
+          for (let j = i + 1; j < vertices.length; j++) {
+            const dx = vertices[i].x - vertices[j].x;
+            const dy = vertices[i].y - vertices[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              const opacity = 1 - dist / 150;
+              ctx.strokeStyle = `rgba(60, 188, 207, ${opacity})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(vertices[i].x, vertices[i].y);
+              ctx.lineTo(vertices[j].x, vertices[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+    
+    // Update canvas on window resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('vertexNetwork');
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+    
+    // Initialize Vertex Network Effect (if reduced motion is not preferred)
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      createVertexNetworkEffect();
+    }
+  </script>
+</body>
+</html>

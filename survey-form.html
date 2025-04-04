@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"> <!-- Start with a default theme attribute -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linfy Tech Solutions - Interactive Feedback Experience</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <!-- Font Awesome CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Space+Grotesk:wght@300..700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- AOS Animation Library -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+  />
+
+  <!-- Custom Styles -->
+  <style>
+    /* ==== Core Design Variables ==== */
+    :root {
+      --primary-h: 252;
+      --primary-s: 94%;
+      --primary-l: 64%;
+      --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+      --primary-light: hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) + 15%));
+      --primary-dark: hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 15%));
+
+      --secondary-h: 182;
+      --secondary-s: 85%;
+      --secondary-l: 55%;
+      --secondary: hsl(var(--secondary-h), var(--secondary-s), var(--secondary-l));
+
+      --accent-h: 330;
+      --accent-s: 84%;
+      --accent-l: 60%;
+      --accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+
+      --success-h: 142;
+      --success-s: 69%;
+      --success-l: 58%;
+      --success: hsl(var(--success-h), var(--success-s), var(--success-l));
+
+      --warning-h: 36;
+      --warning-s: 100%;
+      --warning-l: 65%;
+      --warning: hsl(var(--warning-h), var(--warning-s), var(--warning-l));
+
+      --danger-h: 354;
+      --danger-s: 84%;
+      --danger-l: 60%;
+      --danger: hsl(var(--danger-h), var(--danger-s), var(--danger-l));
+
+      --dark-h: 220;
+      --dark-s: 40%;
+      --dark-l: 16%;
+      --dark: hsl(var(--dark-h), var(--dark-s), var(--dark-l));
+
+      --gray-h: 220;
+      --gray-s: 16%;
+      --gray-l: 96%;
+      --gray: hsl(var(--gray-h), var(--gray-s), var(--gray-l));
+      --gray-dark: hsl(var(--gray-h), calc(var(--gray-s) - 5%), calc(var(--gray-l) - 10%)); /* e.g. #e9ecef */
+      --gray-medium: hsl(var(--gray-h), calc(var(--gray-s) - 10%), calc(var(--gray-l) - 30%)); /* e.g. #adb5bd */
+      --gray-darker: hsl(var(--gray-h), calc(var(--gray-s) + 5%), calc(var(--gray-l) - 50%)); /* e.g. #6c757d */
+      --text-color: #252a34;
+      --bg-color: #f5f9ff;
+      --card-bg: white;
+      --border-color: var(--gray-dark);
+      --input-bg: #f8f9fa;
+
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, var(--primary), hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 10%)));
+      --gradient-vibrant: linear-gradient(135deg, var(--primary), var(--accent));
+      --gradient-success: linear-gradient(135deg, var(--success), var(--secondary));
+
+      /* Typography */
+      --font-heading: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+
+      /* Border Radii */
+      --radius: 0.625rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --radius-pill: 50rem; /* Use a large value for pill shape */
+      --radius-circle: 50%;
+
+      /* Shadows */
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --shadow-lg: 0 15px 30px -10px rgb(0 0 0 / 0.15);
+      --shadow-focus: 0 0 0 0.25rem hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.25);
+
+      /* Transitions */
+      --transition: 0.3s ease-in-out;
+    }
+
+    /* ==== Base Styles ==== */
+    html {
+      scroll-behavior: smooth;
+      height: 100%;
+    }
+    body {
+      font-family: var(--font-body);
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      margin: 0;
+      overflow-x: hidden;
+      background-image: radial-gradient(circle at 20% 30%, hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.08), transparent 350px),
+                        radial-gradient(circle at 80% 10%, hsla(var(--secondary-h), var(--secondary-s), var(--secondary-l), 0.08), transparent 250px),
+                        radial-gradient(circle at 10% 80%, hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.08), transparent 250px);
+      background-attachment: fixed;
+      display: flex; /* Ensure body takes height */
+      flex-direction: column; /* Stack elements vertically */
+      min-height: 100vh; /* Minimum height of viewport */
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    /* Focus visible state for accessibility */
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      box-shadow: var(--shadow-focus);
+    }
+    /* Removing default outline when focus-visible is supported */
+    *:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+
+    /* ==== Theme Toggle ==== */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1031; /* Above Bootstrap fixed navbar */
+      width: 45px;
+      height: 45px;
+      border-radius: var(--radius-circle);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform var(--transition), background-color var(--transition), border-color var(--transition);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+    .theme-toggle i {
+      font-size: 1.1rem;
+      color: var(--dark);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      position: absolute; /* Allows smooth fade */
+    }
+    .theme-toggle .fa-sun { opacity: 1; transform: scale(1); }
+    .theme-toggle .fa-moon { opacity: 0; transform: scale(0); }
+
+    /* Dark Mode */
+    [data-theme="dark"] {
+      --primary-h: 252;
+      --primary-s: 80%; /* Slightly less saturated for dark */
+      --primary-l: 70%;
+      --secondary-h: 182;
+      --secondary-s: 75%;
+      --secondary-l: 60%;
+      --accent-h: 330;
+      --accent-s: 75%;
+      --accent-l: 65%;
+      --success-h: 142;
+      --success-s: 60%;
+      --success-l: 65%;
+      --warning-h: 36;
+      --warning-s: 90%;
+      --warning-l: 70%;
+      --danger-h: 354;
+      --danger-s: 75%;
+      --danger-l: 65%;
+
+      --text-color: #e9ecef;
+      --bg-color: #0f172a; /* Darker background */
+      --card-bg: #1e293b; /* Dark card background */
+      --border-color: #334155; /* Darker border */
+      --input-bg: #334155;
+      --gray-medium: #64748b;
+      --gray-darker: #94a3b8;
+    }
+
+    [data-theme="dark"] body {
+      background-image: radial-gradient(circle at 20% 30%, hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1), transparent 350px),
+                        radial-gradient(circle at 80% 10%, hsla(var(--secondary-h), var(--secondary-s), var(--secondary-l), 0.1), transparent 250px),
+                        radial-gradient(circle at 10% 80%, hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.1), transparent 250px);
+    }
+    [data-theme="dark"] .theme-toggle {
+      background: rgba(30, 41, 59, 0.8); /* Dark background */
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    [data-theme="dark"] .theme-toggle i { color: var(--primary-light); }
+    [data-theme="dark"] .theme-toggle .fa-sun { opacity: 0; transform: scale(0); }
+    [data-theme="dark"] .theme-toggle .fa-moon { opacity: 1; transform: scale(1); }
+    [data-theme="dark"] .experience-box { background: var(--card-bg); box-shadow: 0 20px 60px -15px rgba(0,0,0,0.3); }
+    [data-theme="dark"] .progress-line { background: var(--border-color); }
+    [data-theme="dark"] .step-icon { background: var(--card-bg); border-color: var(--border-color); }
+    [data-theme="dark"] .wizard-step.active .step-icon { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 5px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.2); }
+    [data-theme="dark"] .wizard-step.completed .step-icon { background: var(--success); border-color: var(--success); }
+    [data-theme="dark"] .step-label { color: var(--gray-medium); }
+    [data-theme="dark"] .wizard-step.active .step-label { color: var(--primary); }
+    [data-theme="dark"] .step-description,
+    [data-theme="dark"] .satisfaction-question,
+    [data-theme="dark"] .satisfaction-value,
+    [data-theme="dark"] .satisfaction-label,
+    [data-theme="dark"] .form-label { color: var(--gray-darker); }
+    [data-theme="dark"] .form-control,
+    [data-theme="dark"] .form-select { background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-color); }
+    [data-theme="dark"] .form-control:focus,
+    [data-theme="dark"] .form-select:focus { background-color: #27354b; border-color: var(--primary); color: var(--text-color); }
+    [data-theme="dark"] .floating-label label { color: var(--gray-darker); }
+    [data-theme="dark"] .floating-label .form-control:focus ~ label,
+    [data-theme="dark"] .floating-label .form-control:not(:placeholder-shown) ~ label { color: var(--primary); background-color: var(--card-bg); /* Need background for overlap */}
+    [data-theme="dark"] .comment-box textarea { background: var(--input-bg); border-color: var(--border-color); color: var(--text-color); }
+    [data-theme="dark"] .comment-box textarea:focus { background: #27354b; border-color: var(--primary); }
+    [data-theme="dark"] .comment-box textarea:focus + .comment-box-label,
+    [data-theme="dark"] .comment-box textarea:not(:placeholder-shown) + .comment-box-label { background: var(--card-bg); } /* Need background for overlap */
+    [data-theme="dark"] .satisfaction-meter { background: var(--border-color); box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); }
+    [data-theme="dark"] .satisfaction-handle { background: var(--card-bg); border-color: var(--border-color); }
+    [data-theme="dark"] .satisfaction-label.active { color: var(--primary); }
+    [data-theme="dark"] .btn-prev { background: #334155; color: var(--text-color); }
+    [data-theme="dark"] .btn-prev:hover { background: #475569; }
+    [data-theme="dark"] .form-navigation { border-top-color: var(--border-color); }
+    [data-theme="dark"] .service-tile { background: var(--input-bg); border-color: var(--border-color); }
+    [data-theme="dark"] .service-tile:hover { background: #27354b; }
+    [data-theme="dark"] .service-tile input:checked + .service-content { border-color: var(--primary); background-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1); }
+    [data-theme="dark"] .success-animation { background: var(--card-bg); }
+    [data-theme="dark"] .success-message { color: var(--gray-darker); }
+    [data-theme="dark"] .nav-button { background: rgba(30, 41, 59, 0.8); color: var(--text-color); border-color: rgba(255, 255, 255, 0.1); }
+    [data-theme="dark"] .nav-button:hover { background: var(--primary); color: var(--dark); }
+    [data-theme="dark"] .form-progress-container { background: rgba(30, 41, 59, 0.8); color: var(--text-color); border: 1px solid rgba(255, 255, 255, 0.1);}
+    [data-theme="dark"] .progress-bar { background: var(--border-color); }
+
+
+    /* ==== Top Navigation Buttons ==== */
+    .top-buttons {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1031; /* Above Bootstrap fixed navbar */
+      display: flex;
+      gap: 0.75rem; /* Slightly smaller gap */
+    }
+    .nav-button {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: var(--radius-pill);
+      padding: 0.6rem 1.2rem; /* Adjusted padding */
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.95rem; /* Slightly smaller font */
+      color: var(--dark);
+      box-shadow: var(--shadow);
+      transition: transform var(--transition), background-color var(--transition), color var(--transition), box-shadow var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none; /* Ensure buttons used as links look right */
+    }
+    .nav-button:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ==== Form Container ==== */
+    .form-experience-container {
+      max-width: 1000px;
+      margin: 0 auto; /* Let body flex handle vertical centering/spacing */
+      padding: 6rem 1.5rem 4rem; /* Increased top padding */
+      position: relative;
+      z-index: 1;
+      flex-grow: 1; /* Allow container to grow */
+      width: 100%;
+    }
+    .experience-header {
+      text-align: center;
+      margin-bottom: 4rem; /* Increased margin */
+    }
+    .headline {
+      font-weight: 800;
+      font-size: clamp(2.2rem, 5vw, 3.5rem); /* Responsive font size */
+      margin-bottom: 0.75rem;
+      position: relative;
+      display: inline-block;
+      color: var(--text-color); /* Ensure headline text color respects theme */
+    }
+    .headline-accent {
+      position: relative;
+      display: inline-block;
+      color: var(--primary); /* Make accent color stand out */
+    }
+    .headline-accent::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 0.25em; /* Slightly thinner underline */
+      bottom: 0.15em;
+      left: 0;
+      background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+      opacity: 0.4; /* Slightly less opaque */
+      border-radius: 0.25rem;
+      transition: opacity 0.5s;
+      z-index: -1; /* Behind the text */
+    }
+    .headline-description {
+      font-size: clamp(1rem, 3vw, 1.25rem); /* Responsive font size */
+      color: var(--gray-darker);
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    /* ==== Experience Box & Wizard ==== */
+    .experience-box {
+      border-radius: var(--radius-xl); /* Larger radius */
+      overflow: hidden;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      transition: transform var(--transition), background-color var(--transition), box-shadow var(--transition);
+    }
+    .form-header {
+      padding: 1.5rem 1rem; /* Adjusted padding */
+      border-bottom: 1px solid var(--border-color); /* Add subtle separator */
+    }
+    .wizard-progress {
+      display: flex;
+      position: relative;
+      margin-bottom: 1rem; /* Reduced margin */
+      justify-content: space-between;
+      padding: 0 1rem;
+    }
+    .progress-line {
+      position: absolute;
+      top: 25px; /* Adjusted based on smaller icon size */
+      left: 10%; /* Start/end inside the edge steps */
+      width: 80%; /* Span between centers */
+      height: 4px;
+      background: var(--border-color);
+      z-index: 1;
+      border-radius: var(--radius-pill);
+    }
+    .progress-line-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      transition: width 0.6s ease-in-out;
+      z-index: 2;
+      border-radius: var(--radius-pill);
+    }
+    .wizard-step {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 20%;
+      cursor: default; /* Steps aren't directly clickable */
+      transition: transform var(--transition);
+    }
+    .step-icon {
+      width: 50px; /* Smaller icon */
+      height: 50px;
+      border-radius: var(--radius-circle);
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem; /* Reduced margin */
+      box-shadow: var(--shadow);
+      border: 2px solid var(--border-color);
+      transition: all var(--transition);
+      color: var(--gray-medium);
+    }
+    .wizard-step.active .step-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 5px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.2);
+      color: white;
+    }
+    .wizard-step.active .step-label {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .wizard-step.completed .step-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+     .wizard-step.completed .step-label {
+      color: var(--success); /* Indicate completion */
+    }
+    .step-label {
+      font-weight: 500; /* Lighter weight */
+      font-size: 0.85rem;
+      color: var(--gray-medium);
+      text-align: center;
+      transition: color var(--transition);
+    }
+
+    /* ==== Form Steps ==== */
+    .form-content {
+      position: relative;
+      /* Removed fixed min-height, let content dictate height */
+      overflow: hidden;
+    }
+    .form-step {
+      position: absolute;
+      width: 100%;
+      /* height: 100%; Don't force height */
+      top: 0;
+      left: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(30px);
+      transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s, transform 0.5s ease-in-out;
+      padding: 2.5rem; /* Increased padding */
+    }
+    .form-step.active {
+      position: relative; /* Take up space in the flow */
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      transition: opacity 0.5s ease-in-out, visibility 0s linear 0s, transform 0.5s ease-in-out;
+    }
+    .form-step-header {
+      text-align: center;
+      margin-bottom: 3rem; /* Increased margin */
+    }
+    .step-title {
+      font-size: clamp(1.8rem, 4vw, 2.2rem); /* Responsive */
+      margin-bottom: 0.75rem;
+      background: var(--gradient-vibrant);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent; /* Fallback */
+      -webkit-text-fill-color: transparent;
+    }
+    .step-icon-header {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px; /* Slightly smaller */
+      height: 70px;
+      border-radius: var(--radius-circle);
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: white;
+      font-size: 1.8rem; /* Slightly smaller */
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 15px -8px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.5);
+      /* Removed distracting animations */
+    }
+    .step-description {
+      font-size: 1.1rem;
+      color: var(--gray-darker);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ==== Enhanced Form Controls ==== */
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--text-color); /* Ensure label color respects theme */
+    }
+    .form-control, .form-select {
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      min-height: calc(1.5em + 1rem + 2px); /* Bootstrap default height */
+      padding: 0.5rem 1rem; /* Standard padding */
+    }
+     .form-control::placeholder { /* Standard placeholder style */
+        color: var(--gray-medium);
+        opacity: 1;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-focus);
+      background-color: var(--card-bg); /* Match card bg on focus */
+    }
+    /* Validation styles */
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: var(--danger);
+        background-image: none; /* Remove default BS icon */
+    }
+    .form-control.is-invalid:focus, .form-select.is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem hsla(var(--danger-h), var(--danger-s), var(--danger-l), 0.25);
+    }
+     .invalid-feedback { /* Make feedback more visible */
+      display: block; /* Always show when .is-invalid is present */
+      font-weight: 500;
+    }
+
+
+    /* ==== Floating Labels ==== */
+    .floating-label {
+      position: relative;
+    }
+    /* Override standard padding for floating effect */
+    .floating-label .form-control {
+      height: calc(3.5rem + 2px); /* Taller for floating label */
+      padding: 1.625rem 1rem 0.625rem 1rem; /* Padding for label space */
+    }
+    .floating-label label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      padding: 1rem 1rem; /* Match input padding */
+      pointer-events: none;
+      border: 1px solid transparent; /* Prevent layout shift */
+      transform-origin: 0 0;
+      transition: opacity .15s ease-in-out, transform .15s ease-in-out;
+      color: var(--gray-darker);
+      font-weight: 500;
+      z-index: 1; /* Ensure label is above input background */
+      display: flex; /* Align icon and text */
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .floating-label .form-control::-moz-placeholder { color: transparent; } /* Hide placeholder visually */
+    .floating-label .form-control::placeholder { color: transparent; }
+    .floating-label .form-control:focus,
+    .floating-label .form-control:not(:placeholder-shown) {
+      padding-top: 1.625rem;
+      padding-bottom: 0.625rem;
+    }
+    /* State when label floats up */
+    .floating-label .form-control:focus ~ label,
+    .floating-label .form-control:not(:placeholder-shown) ~ label {
+      opacity: 0.75;
+      transform: scale(0.80) translateY(-0.6rem) translateX(0.15rem);
+      color: var(--primary);
+      background-color: var(--card-bg); /* Needs background when floating over input */
+      padding: 0.1rem 0.4rem; /* Padding around the shrunk label */
+      height: auto; /* Allow height to adjust */
+      width: auto; /* Allow width to adjust */
+      border-radius: 0.25rem; /* Optional: rounded corners */
+      left: 0.75rem; /* Adjust left position */
+    }
+
+    /* ==== Satisfaction Meter ==== */
+    .satisfaction-meter-container {
+      margin: 3rem 0;
+      text-align: center;
+    }
+    .satisfaction-question {
+      font-size: 1.2rem; /* Slightly smaller */
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem; /* Space between icon and text */
+    }
+    .satisfaction-meter {
+      position: relative;
+      height: 12px; /* Thinner bar */
+      background: var(--border-color);
+      border-radius: var(--radius-pill);
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 2rem; /* Increased bottom margin */
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .satisfaction-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%; /* Default to middle */
+      border-radius: var(--radius-pill);
+      background: linear-gradient(to right, var(--danger) 0%, var(--warning) 35%, var(--primary) 65%, var(--success) 100%);
+      transition: width 0.3s ease-out;
+    }
+    .satisfaction-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%; /* Default to middle */
+      transform: translate(-50%, -50%);
+      width: 40px; /* Slightly smaller handle */
+      height: 40px;
+      border-radius: var(--radius-circle);
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      cursor: grab;
+      z-index: 2;
+      transition: transform 0.2s ease-out, box-shadow var(--transition);
+      border: 2px solid var(--border-color);
+      font-size: 1.2rem; /* Icon size */
+      color: var(--gray-darker); /* Default icon color */
+    }
+    .satisfaction-handle:focus-visible {
+      box-shadow: var(--shadow-focus);
+      outline: none; /* Use box-shadow for focus */
+    }
+    .satisfaction-handle:active {
+      cursor: grabbing;
+      transform: translate(-50%, -50%) scale(1.15); /* More pronounced active scale */
+      box-shadow: var(--shadow-lg);
+    }
+    .satisfaction-value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      min-height: 1.5em; /* Prevent layout shift */
+    }
+    .satisfaction-labels {
+      display: flex;
+      justify-content: space-between;
+      max-width: 600px;
+      margin: 0 auto;
+      gap: 0.5rem; /* Add gap between labels */
+    }
+    .satisfaction-label {
+      text-align: center;
+      flex: 1;
+      padding: 0.5rem 0.2rem; /* Adjusted padding */
+      border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 0.85rem; /* Smaller text */
+      color: var(--gray-medium);
+      cursor: pointer;
+      transition: transform 0.2s ease-out, color var(--transition);
+      display: flex;
+      flex-direction: column; /* Stack icon and text */
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .satisfaction-label i {
+      font-size: 1.2rem; /* Icon size in labels */
+      margin-bottom: 0.2rem;
+    }
+    .satisfaction-label:hover {
+       color: var(--primary);
+    }
+    .satisfaction-label.active {
+      color: var(--primary);
+      font-weight: 700;
+      transform: translateY(-3px); /* Subtle lift */
+    }
+
+    /* ==== Comment Box ==== */
+    .comment-box {
+      position: relative;
+      margin: 2.5rem 0; /* Increased margin */
+    }
+    .comment-box textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 1.25rem;
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background: var(--input-bg);
+      color: var(--text-color);
+      resize: vertical; /* Allow vertical resize */
+      transition: all var(--transition);
+    }
+     .comment-box textarea::placeholder { /* Standard placeholder */
+        color: var(--gray-medium);
+        opacity: 1;
+    }
+    .comment-box textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--card-bg);
+      box-shadow: var(--shadow-focus);
+    }
+    /* Using standard placeholder now, floating label effect removed for textarea */
+    /* Remove floating label for textarea for simplicity, use standard label/placeholder */
+    .comment-box-label { display: none; } /* Hide if not using floating */
+    /* Add a standard label above the textarea if needed */
+    .comment-box label.form-label { /* Style for a potential standard label */
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    /* ==== Service Tiles ==== */
+    .service-grid {
+      margin-bottom: 2rem; /* Add margin below grid */
+    }
+    .service-tile {
+      position: relative;
+      border-radius: var(--radius);
+      border: 2px solid var(--border-color);
+      background-color: var(--input-bg);
+      transition: all var(--transition);
+      cursor: pointer;
+      overflow: hidden; /* Hide checkbox */
+    }
+     .service-tile:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: var(--gray-medium);
+    }
+    /* Hide actual checkbox */
+    .service-checkbox {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .service-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem 1rem; /* More padding */
+      transition: background-color var(--transition);
+      height: 100%; /* Ensure content fills tile */
+    }
+    .service-icon {
+      font-size: 2rem; /* Larger icon */
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+      line-height: 1;
+    }
+    .service-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+    /* Checked state */
+    .service-tile input:checked + .service-content {
+        border-color: var(--primary); /* Use border color on parent */
+        background-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1); /* Subtle background tint */
+    }
+    .service-tile input:checked + .service-content .service-icon {
+       /* Optional: change icon color when checked */
+       /* color: white; */
+    }
+     /* Add a checkmark indicator */
+    .service-tile::after {
+        content: "\f00c"; /* Font Awesome check */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1rem;
+        color: white;
+        background-color: var(--primary);
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(0);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+        z-index: 1;
+    }
+    .service-tile input:checked ~ .service-content::after, /* Corrected selector - target ::after on sibling */
+    .service-tile input:checked + .service-content::after /* For direct sibling if structure changes */
+    {
+       /* This selector won't work as ::after is on .service-tile */
+    }
+
+    /* Correct way to show ::after on checked */
+    .service-tile input:checked ~ ::after { /* Target ::after on the tile itself */
+         transform: scale(1);
+         opacity: 1;
+    }
+     /* Corrected - Apply ::after to the TILE, not the content */
+    .service-tile input:checked::after {
+       /* This won't work, pseudo-elements cannot be applied to input */
+    }
+    /* Put the ::after styles back on .service-tile */
+     .service-tile input:checked ~ .service-tile::after {
+         /* Still incorrect */
+     }
+      /* ** Correct Approach: Style the tile directly when the checkbox inside it is checked ** */
+     .service-tile input:checked + .service-content { /* Existing style for background */
+         /* border-color: var(--primary); */ /* Border can be on tile */
+         /* background-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1); */
+     }
+    .service-tile input:checked { /* This targets the input, not the tile */ }
+
+     /* ** Final Corrected Approach for Checkmark ** */
+     /* Add a dedicated span inside .service-content for the checkmark */
+    .service-content .checkmark-indicator {
+        /* Style like the ::after element */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1rem;
+        color: white;
+        background-color: var(--primary);
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(0);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+        z-index: 1;
+    }
+     .service-tile input:checked + .service-content .checkmark-indicator {
+         transform: scale(1);
+         opacity: 1;
+     }
+     /* Also add border to the TILE itself on check */
+     .service-tile input:checked + .service-content {
+         /* Keep background change */
+         background-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1);
+     }
+     .service-tile input:checked ~ * { /* This won't work as intended */ }
+
+     /* ** Simplest Approach: Border on the tile itself ** */
+    .service-tile input:checked {
+        /* Cannot style parent from child with CSS alone */
+    }
+    /* Use JS to add a class to the tile when checked, or style based on the existing input:checked + sibling selector if possible */
+    /* Let's stick to styling the .service-content sibling and add border there */
+     .service-tile input:checked + .service-content {
+         position: relative; /* Needed for absolute positioning of indicator */
+         border: 2px solid var(--primary); /* Add border here */
+         margin: -2px; /* Compensate for border size to keep layout */
+         border-radius: var(--radius); /* Re-apply radius */
+         background-color: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.1);
+     }
+
+
+    /* ==== Navigation Buttons ==== */
+    .form-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3rem; /* Increased margin */
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease-out, background-color var(--transition), box-shadow var(--transition);
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .nav-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-prev {
+      background: var(--gray-dark);
+      color: var(--text-color);
+    }
+    .btn-prev:hover:not(:disabled) {
+      background: var(--gray-medium);
+      transform: translateX(-3px);
+    }
+    .btn-next {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 10px -2px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.4);
+    }
+    .btn-next:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateX(3px);
+      box-shadow: 0 6px 12px -3px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.5);
+    }
+    .btn-submit {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.85rem 1.8rem; /* Slightly larger submit */
+      box-shadow: 0 4px 15px -3px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.5);
+      position: relative;
+      overflow: hidden; /* For potential ripple effects or loading indicators */
+    }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px -5px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.6);
+    }
+    .btn-icon {
+      transition: transform 0.3s ease-in-out;
+    }
+    .btn-prev:hover:not(:disabled) .btn-icon { transform: translateX(-3px); }
+    .btn-next:hover:not(:disabled) .btn-icon,
+    .btn-submit:hover:not(:disabled) .btn-icon { transform: translateX(3px); }
+
+    /* Typing indicator for submit button */
+    .typing-indicator { display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .typing-indicator-dot {
+        width: 8px; height: 8px; border-radius: 50%; background-color: currentColor;
+        animation: typing 1s infinite ease-in-out;
+    }
+    .typing-indicator-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1.0); }
+    }
+
+
+    /* ==== Success Animation ==== */
+    .success-animation {
+      position: absolute; /* Position within .form-content */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
+      padding: 2rem;
+    }
+    .success-animation.active {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+    .checkmark-container {
+      width: 120px; /* Smaller checkmark */
+      height: 120px;
+      margin-bottom: 1.5rem;
+    }
+    .success-circle {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      stroke-width: 5; /* Thinner stroke */
+      stroke: var(--success);
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65,0,0.45,1) 0.1s forwards; /* Slight delay */
+    }
+    .checkmark {
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      stroke-width: 6;
+      stroke: var(--success); /* Match circle color */
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      animation: stroke 0.3s cubic-bezier(0.65,0,0.45,1) 0.7s forwards; /* Delay after circle */
+    }
+    @keyframes stroke {
+      100% { stroke-dashoffset: 0; }
+    }
+    .success-text {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: fadeInUp 0.6s ease forwards 1s; /* Delay after checkmark */
+    }
+    .success-title {
+      font-size: 2.2rem;
+      margin-bottom: 0.75rem;
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent; /* Fallback */
+      -webkit-text-fill-color: transparent;
+    }
+    .success-message {
+      font-size: 1.1rem;
+      color: var(--gray-darker);
+      margin-bottom: 2rem;
+      max-width: 450px;
+    }
+    .success-btn {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 15px -3px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.4);
+      transition: transform 0.3s ease-out, box-shadow var(--transition);
+      display: inline-flex; /* Align icon */
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .success-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px -5px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.5);
+      color: white; /* Ensure text color stays white */
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==== Confetti Canvas ==== */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999; /* Highest */
+      display: none;
+    }
+
+     /* ==== Form Progress Indicator ==== */
+    .form-progress-container {
+        position: fixed;
+        bottom: 1.5rem; /* Slightly higher */
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 0.6rem 1rem; /* Adjusted padding */
+        border-radius: var(--radius-pill);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease-in-out, visibility 0s linear 0.4s, bottom 0.4s ease-in-out;
+        z-index: 1030; /* Below top nav/theme toggle */
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .form-progress-container.visible {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+    .progress-text {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--dark); /* Ensure readable text */
+    }
+    .progress-bar {
+        height: 8px; /* Slightly thicker */
+        width: 120px; /* Shorter bar */
+        background: var(--gray-dark);
+        border-radius: var(--radius-pill);
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        transition: width 0.5s ease-out;
+        border-radius: var(--radius-pill);
+    }
+
+
+    /* ==== Responsive Styles ==== */
+    @media (max-width: 992px) {
+        .form-experience-container { padding-top: 7rem; } /* More space needed if top nav wraps */
+    }
+
+    @media (max-width: 768px) {
+        .headline { font-size: 2.5rem; }
+        .step-icon { width: 45px; height: 45px; }
+        .progress-line { top: 22.5px; }
+        .step-label { font-size: 0.8rem; }
+        .form-step { padding: 2rem 1.5rem; }
+        .top-buttons { flex-wrap: wrap; justify-content: center; left: 0; width: 100%; padding: 0 1rem; top: 0.5rem; } /* Adjust top nav */
+        .nav-button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+        .theme-toggle { top: 0.5rem; right: 0.5rem; width: 40px; height: 40px; }
+        .form-experience-container { padding-top: 5rem; } /* Adjust padding for mobile nav */
+    }
+
+    @media (max-width: 576px) {
+        .headline { font-size: 2rem; }
+        .headline-description { font-size: 1rem; }
+        .experience-header { margin-bottom: 3rem; }
+        .satisfaction-labels { flex-direction: column; gap: 0.8rem; } /* Stack labels vertically */
+        .satisfaction-label { width: 100%; text-align: center; flex-direction: row; justify-content: center; gap: 0.5rem; } /* Align icon/text row */
+        .satisfaction-label i { margin-bottom: 0; }
+        .form-navigation { flex-direction: column; gap: 1rem; align-items: stretch; } /* Stack nav buttons */
+        .nav-btn { width: 100%; justify-content: center; }
+        .wizard-progress { padding: 0 0.5rem; }
+        .step-icon { width: 40px; height: 40px; }
+        .progress-line { top: 20px; }
+        .form-step-header { margin-bottom: 2rem; }
+        .step-icon-header { width: 60px; height: 60px; font-size: 1.6rem; }
+        .form-progress-container { bottom: 1rem; width: calc(100% - 2rem); /* Near full width */}
+    }
+
+  </style>
+</head>
+<body data-aos-easing="ease-out-cubic" data-aos-duration="800" data-aos-delay="0"> <!-- Add AOS defaults to body -->
+  <!-- Top Navigation -->
+  <div class="top-buttons">
+    <!-- Use correct relative paths to the HTML files -->
+    <a href="portfoliio.html" class="nav-button">
+      <i class="fas fa-briefcase"></i> Portfolio
+    </a>
+  </div>
+
+  <!-- Theme Toggle -->
+  <div class="theme-toggle" id="theme-toggle" title="Toggle theme">
+    <i class="fas fa-sun"></i>
+    <i class="fas fa-moon"></i>
+  </div>
+
+  <!-- Form Progress Indicator -->
+  <div class="form-progress-container" id="form-progress-container">
+    <div class="progress-text">Completion: <span id="progress-percentage">0%</span></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="form-experience-container">
+    <!-- Header -->
+    <div class="experience-header" data-aos="fade-up">
+      <h1 class="headline">Your <span class="headline-accent">Feedback</span> Fuels Our Innovation</h1>
+      <p class="headline-description">Help us create even better tech experiences by sharing your thoughts in this interactive survey.</p>
+    </div>
+
+    <!-- Experience Box -->
+    <div class="experience-box" data-aos="fade-up" data-aos-delay="100"> <!-- Slightly less delay -->
+      <!-- Wizard Progress -->
+      <div class="form-header"> <!-- Removed px-4 pt-4, added border -->
+        <div class="wizard-progress">
+          <div class="progress-line">
+            <div class="progress-line-fill" id="progress-line-fill"></div>
+          </div>
+          <!-- Steps -->
+          <div class="wizard-step active" data-step="1">
+            <div class="step-icon"><i class="fas fa-user"></i></div>
+            <div class="step-label">About You</div>
+          </div>
+          <div class="wizard-step" data-step="2">
+            <div class="step-icon"><i class="fas fa-cogs"></i></div>
+            <div class="step-label">Services</div>
+          </div>
+          <div class="wizard-step" data-step="3">
+            <div class="step-icon"><i class="fas fa-star"></i></div>
+            <div class="step-label">Feedback</div>
+          </div>
+          <div class="wizard-step" data-step="4">
+            <div class="step-icon"><i class="fas fa-comment"></i></div>
+            <div class="step-label">Comments</div>
+          </div>
+          <div class="wizard-step" data-step="5">
+            <div class="step-icon"><i class="fas fa-check"></i></div>
+            <div class="step-label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Content -->
+      <form id="feedback-form" novalidate>
+        <div class="form-content">
+          <!-- Step 1: About You -->
+          <div class="form-step active" id="step-1">
+            <div class="form-step-header">
+              <div class="step-icon-header"> <!-- Removed inline animation -->
+                <i class="fas fa-user-circle"></i>
+              </div>
+              <h2 class="step-title">Tell Us About You</h2>
+              <p class="step-description">Let's start with some basic information so we can get to know you better.</p>
+            </div>
+            <div class="row g-4">
+              <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                <div class="floating-label">
+                  <input type="text" class="form-control" id="name" name="name" placeholder=" " required>
+                  <label for="name"><i class="fas fa-user fa-fw"></i> Your Full Name</label>
+                   <div class="invalid-feedback">Please enter your name.</div>
+                </div>
+              </div>
+              <div class="col-md-6" data-aos="fade-left" data-aos-delay="300">
+                <div class="floating-label">
+                  <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                  <label for="email"><i class="fas fa-envelope fa-fw"></i> Email Address</label>
+                   <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+              </div>
+              <div class="col-md-6" data-aos="fade-right" data-aos-delay="400">
+                <div class="floating-label">
+                  <input type="tel" class="form-control" id="phone" name="phone" placeholder=" ">
+                  <label for="phone"><i class="fas fa-phone fa-fw"></i> Phone Number (Optional)</label>
+                </div>
+              </div>
+              <div class="col-md-6" data-aos="fade-left" data-aos-delay="500">
+                <div class="floating-label">
+                  <input type="text" class="form-control" id="company" name="company" placeholder=" ">
+                  <label for="company"><i class="fas fa-building fa-fw"></i> Company (Optional)</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-navigation">
+              <div></div> <!-- Spacer -->
+              <button type="button" class="nav-btn btn-next" id="btn-to-step-2">
+                Continue <i class="fas fa-arrow-right btn-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Services -->
+          <div class="form-step" id="step-2">
+            <div class="form-step-header">
+              <div class="step-icon-header"> <!-- Removed inline animation -->
+                <i class="fas fa-cogs"></i>
+              </div>
+              <h2 class="step-title">Services You've Used</h2>
+              <p class="step-description">Tell us about the services you've experienced with us.</p>
+            </div>
+            <div class="row g-3 mb-4"> <!-- Use g-3 for tighter spacing here -->
+              <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                <label for="usage" class="form-label"><i class="fas fa-hashtag fa-fw"></i> How many times have you used our services?</label>
+                <input type="number" class="form-control" id="usage" name="usage" placeholder="e.g., 1" min="0">
+              </div>
+              <div class="col-md-6" data-aos="fade-left" data-aos-delay="300">
+                <label for="last_used" class="form-label"><i class="fas fa-calendar-alt fa-fw"></i> When did you last use our service?</label>
+                <input type="date" class="form-control" id="last_used" name="last_used">
+              </div>
+            </div>
+            <label class="form-label mb-3"><i class="fas fa-check-circle fa-fw"></i> Which services have you used? (Select all that apply)</label>
+            <div class="service-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> <!-- Adjusted cols and gap -->
+              <!-- Service Tiles -->
+              <div class="col" data-aos="zoom-in-up" data-aos-delay="300">
+                <div class="service-tile" tabindex="0"> <!-- Make tile focusable -->
+                    <input type="checkbox" class="service-checkbox" id="service-1" name="services_used[]" value="Device Repair">
+                    <div class="service-content p-3">
+                      <span class="checkmark-indicator"><i class="fas fa-check"></i></span> <!-- Added indicator -->
+                      <div class="service-icon"><i class="fas fa-laptop-medical"></i></div>
+                      <div class="service-title">Device Repairs</div>
+                    </div>
+                 </div>
+              </div>
+              <div class="col" data-aos="zoom-in-up" data-aos-delay="350">
+                 <div class="service-tile" tabindex="0">
+                    <input type="checkbox" class="service-checkbox" id="service-2" name="services_used[]" value="Data Recovery">
+                    <div class="service-content p-3">
+                     <span class="checkmark-indicator"><i class="fas fa-check"></i></span>
+                      <div class="service-icon"><i class="fas fa-database"></i></div>
+                      <div class="service-title">Data Recovery</div>
+                    </div>
+                </div>
+              </div>
+               <div class="col" data-aos="zoom-in-up" data-aos-delay="400">
+                 <div class="service-tile" tabindex="0">
+                    <input type="checkbox" class="service-checkbox" id="service-3" name="services_used[]" value="Eco Solutions">
+                    <div class="service-content p-3">
+                     <span class="checkmark-indicator"><i class="fas fa-check"></i></span>
+                      <div class="service-icon"><i class="fas fa-leaf"></i></div>
+                      <div class="service-title">Eco Solutions</div>
+                    </div>
+                 </div>
+              </div>
+               <div class="col" data-aos="zoom-in-up" data-aos-delay="450">
+                 <div class="service-tile" tabindex="0">
+                    <input type="checkbox" class="service-checkbox" id="service-4" name="services_used[]" value="IT Support">
+                    <div class="service-content p-3">
+                     <span class="checkmark-indicator"><i class="fas fa-check"></i></span>
+                      <div class="service-icon"><i class="fas fa-headset"></i></div> <!-- Changed Icon for IT Support -->
+                      <div class="service-title">IT Support</div>
+                    </div>
+                </div>
+              </div>
+               <div class="col" data-aos="zoom-in-up" data-aos-delay="500">
+                 <div class="service-tile" tabindex="0">
+                    <input type="checkbox" class="service-checkbox" id="service-5" name="services_used[]" value="Consultation">
+                    <div class="service-content p-3">
+                     <span class="checkmark-indicator"><i class="fas fa-check"></i></span>
+                      <div class="service-icon"><i class="fas fa-comments"></i></div> <!-- Changed Icon -->
+                      <div class="service-title">Consultation</div>
+                    </div>
+                 </div>
+              </div>
+               <div class="col" data-aos="zoom-in-up" data-aos-delay="550">
+                 <div class="service-tile" tabindex="0">
+                    <input type="checkbox" class="service-checkbox" id="service-6" name="services_used[]" value="Software Setup">
+                    <div class="service-content p-3">
+                     <span class="checkmark-indicator"><i class="fas fa-check"></i></span>
+                      <div class="service-icon"><i class="fas fa-compact-disc"></i></div> <!-- Changed Icon -->
+                      <div class="service-title">Software Setup</div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-navigation">
+              <button type="button" class="nav-btn btn-prev" id="btn-to-step-1">
+                <i class="fas fa-arrow-left btn-icon"></i> Back
+              </button>
+              <button type="button" class="nav-btn btn-next" id="btn-to-step-3">
+                Continue <i class="fas fa-arrow-right btn-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Satisfaction -->
+          <div class="form-step" id="step-3">
+            <div class="form-step-header">
+              <div class="step-icon-header"> <!-- Removed inline animation -->
+                <i class="fas fa-star"></i>
+              </div>
+              <h2 class="step-title">Your Satisfaction</h2>
+              <p class="step-description">We'd love to know how we did and where we can improve.</p>
+            </div>
+            <div class="satisfaction-meter-container" data-aos="fade-up" data-aos-delay="200">
+              <div class="satisfaction-question">
+                <i class="fas fa-heartbeat fa-fw"></i> How satisfied were you overall? <!-- Changed Icon -->
+              </div>
+               <!-- Added ARIA attributes -->
+              <div class="satisfaction-meter" id="satisfaction-meter"
+                   role="slider"
+                   aria-valuemin="0"
+                   aria-valuemax="100"
+                   aria-valuenow="50"
+                   aria-label="Overall satisfaction slider">
+                <div class="satisfaction-fill" id="satisfaction-fill"></div>
+                <div class="satisfaction-handle" id="satisfaction-handle" tabindex="0"> <!-- Make handle focusable -->
+                  <i class="fas fa-meh"></i> <!-- Default middle icon -->
+                </div>
+              </div>
+              <div class="satisfaction-value" id="satisfaction-value" aria-live="polite"> <!-- Announce changes -->
+                Neutral
+              </div>
+              <div class="satisfaction-labels">
+                <div class="satisfaction-label" data-value="0" tabindex="0"> <!-- Make labels focusable -->
+                  <i class="fas fa-angry"></i>
+                  <span>Very Dissatisfied</span>
+                </div>
+                <div class="satisfaction-label" data-value="33" tabindex="0">
+                  <i class="fas fa-frown"></i>
+                  <span>Dissatisfied</span>
+                </div>
+                <div class="satisfaction-label" data-value="66" tabindex="0">
+                  <i class="fas fa-smile"></i>
+                  <span>Satisfied</span>
+                </div>
+                <div class="satisfaction-label" data-value="100" tabindex="0">
+                  <i class="fas fa-grin-stars"></i>
+                  <span>Very Satisfied</span>
+                </div>
+              </div>
+              <!-- Hidden input REQUIRED -->
+              <input type="number" name="satisfaction_score" id="satisfaction-input" value="50" required style="opacity: 0; position: absolute; pointer-events: none;">
+              <div class="invalid-feedback text-center mt-2">Please rate your satisfaction.</div> <!-- Feedback for meter -->
+            </div>
+            <div class="row g-3 mt-4"> <!-- Use g-3 -->
+              <div class="col-md-6" data-aos="fade-right" data-aos-delay="300">
+                <label for="timeliness" class="form-label"><i class="fas fa-clock fa-fw"></i> How would you rate our timeliness?</label>
+                <select class="form-select" id="timeliness" name="timeliness">
+                  <option value="" selected disabled>Select an option</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
+                  <option value="Average">Average</option>
+                  <option value="Poor">Needs Improvement</option>
+                </select>
+              </div>
+              <div class="col-md-6" data-aos="fade-left" data-aos-delay="400">
+                <label for="value" class="form-label"><i class="fas fa-dollar-sign fa-fw"></i> How was the value for money?</label>
+                <select class="form-select" id="value" name="value">
+                  <option value="" selected disabled>Select an option</option>
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
+                  <option value="Average">Average</option>
+                  <option value="Poor">Needs Improvement</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-navigation">
+              <button type="button" class="nav-btn btn-prev" id="btn-to-step-2-from-3">
+                <i class="fas fa-arrow-left btn-icon"></i> Back
+              </button>
+              <button type="button" class="nav-btn btn-next" id="btn-to-step-4">
+                Continue <i class="fas fa-arrow-right btn-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4: Comments -->
+          <div class="form-step" id="step-4">
+            <div class="form-step-header">
+              <div class="step-icon-header"> <!-- Removed inline animation -->
+                <i class="fas fa-comment-dots"></i> <!-- Changed icon -->
+              </div>
+              <h2 class="step-title">Additional Thoughts</h2>
+              <p class="step-description">Share any other feedback that could help us improve.</p>
+            </div>
+             <!-- Use standard label + placeholder for textarea -->
+            <div class="comment-box mb-4" data-aos="fade-up" data-aos-delay="200">
+               <label for="comments" class="form-label"><i class="fas fa-pencil-alt fa-fw"></i> Tell us more about your experience (Optional)</label>
+              <textarea class="form-control" id="comments" name="comments" placeholder="What did you like? What could be better?" rows="5"></textarea>
+            </div>
+            <div class="row g-3"> <!-- Use g-3 -->
+              <div class="col-md-6" data-aos="fade-right" data-aos-delay="300">
+                <label for="recommend" class="form-label"><i class="fas fa-thumbs-up fa-fw"></i> Would you recommend us?</label>
+                <select class="form-select" id="recommend" name="recommend">
+                  <option value="" selected disabled>Select an option</option>
+                  <option value="Definitely">Definitely</option>
+                  <option value="Probably">Probably</option>
+                  <option value="Not Sure">Not Sure</option>
+                  <option value="Probably Not">Probably Not</option>
+                   <option value="Definitely Not">Definitely Not</option>
+                </select>
+              </div>
+              <div class="col-md-6" data-aos="fade-left" data-aos-delay="400">
+                <label for="improvement" class="form-label"><i class="fas fa-lightbulb fa-fw"></i> One thing we could improve:</label>
+                <input type="text" class="form-control" id="improvement" name="improvement" placeholder="Your top suggestion (Optional)">
+              </div>
+            </div>
+            <div class="form-navigation">
+              <button type="button" class="nav-btn btn-prev" id="btn-to-step-3-from-4">
+                <i class="fas fa-arrow-left btn-icon"></i> Back
+              </button>
+              <button type="button" class="nav-btn btn-submit" id="btn-submit">
+                Submit Feedback <i class="fas fa-paper-plane btn-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Success Animation -->
+          <div class="success-animation" id="success-animation">
+            <div class="checkmark-container">
+              <!-- SVG Checkmark -->
+              <svg width="100%" height="100%" viewBox="0 0 120 120">
+                 <svg viewBox="0 0 52 52">
+                    <circle class="success-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+              </svg>
+            </div>
+            <div class="success-text">
+              <h2 class="success-title">Thank You!</h2>
+              <p class="success-message">Your feedback fuels our progress. We appreciate you taking the time!</p>
+              <a href="#home" class="success-btn"> <!-- Update href -->
+                Return Home <i class="fas fa-home"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div> <!-- End experience-box -->
+  </div> <!-- End form-experience-container -->
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Scripts -->
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <!-- AOS Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize AOS
+      AOS.init({
+        once: false, // Animate elements every time they come into view
+        mirror: false, // Whether elements should animate out while scrolling past them
+      });
+
+      /* ===== Theme Toggle ===== */
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlElement = document.documentElement;
+
+      // Function to apply theme
+      const applyTheme = (theme) => {
+          htmlElement.setAttribute('data-theme', theme);
+          localStorage.setItem('theme', theme);
+          // Explicitly set body attribute for easier JS checks if needed elsewhere
+          document.body.setAttribute('data-theme', theme);
+      };
+
+      // Check for saved theme or OS preference
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme) {
+          applyTheme(savedTheme);
+      } else {
+          applyTheme(prefersDark ? 'dark' : 'light');
+      }
+
+      // Toggle listener
+      themeToggle.addEventListener('click', () => {
+          const currentTheme = htmlElement.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          applyTheme(newTheme);
+
+          // Add a small animation to the toggle button
+          themeToggle.animate(
+              [
+                  { transform: 'scale(1) rotate(0deg)' },
+                  { transform: 'scale(0.8) rotate(15deg)' },
+                  { transform: 'scale(1.1) rotate(-10deg)' },
+                  { transform: 'scale(1) rotate(0deg)' }
+              ],
+              { duration: 400, easing: 'ease-in-out' }
+          );
+      });
+
+       // Update theme if OS preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) { // Only change if user hasn't manually set a theme
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+
+      /* ===== Form Steps & Navigation ===== */
+      const form = document.getElementById('feedback-form');
+      const formSteps = document.querySelectorAll('.form-step');
+      const wizardSteps = document.querySelectorAll('.wizard-step');
+      const progressLine = document.getElementById('progress-line-fill');
+      const successAnimation = document.getElementById('success-animation');
+      const progressContainer = document.getElementById('form-progress-container');
+      const progressFill = document.getElementById('progress-fill');
+      const progressPercentage = document.getElementById('progress-percentage');
+
+      let currentStep = 1;
+      const totalWizardSteps = wizardSteps.length -1; // Exclude "Complete" step for progress calculation
+
+      function updateWizardProgress(stepNumber) {
+           wizardSteps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                const stepData = parseInt(step.getAttribute('data-step'));
+                if (stepData < stepNumber) {
+                    step.classList.add('completed');
+                } else if (stepData === stepNumber) {
+                    step.classList.add('active');
+                }
+           });
+
+           // Update progress line width
+           // Calculate percentage based on *wizard* steps (excluding final success screen)
+           const percentage = stepNumber <= totalWizardSteps
+                ? ((stepNumber - 1) / totalWizardSteps) * 100
+                : 100; // Full width when on last step or success
+           progressLine.style.width = `${percentage}%`;
+      }
+
+      function goToStep(stepNumber) {
+          if (stepNumber < 1 || stepNumber > formSteps.length) return; // Boundary check
+
+          formSteps.forEach(step => step.classList.remove('active'));
+          document.getElementById(`step-${stepNumber}`)?.classList.add('active');
+
+          currentStep = stepNumber;
+          updateWizardProgress(stepNumber);
+
+          // Scroll to top of form box smoothly
+          document.querySelector('.experience-box')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          // Re-initialize AOS for the new active step elements
+          AOS.refreshHard();
+      }
+
+      function validateStep(stepNumber) {
+          let isValid = true;
+          const currentStepElement = document.getElementById(`step-${stepNumber}`);
+          if (!currentStepElement) return false;
+
+          const requiredFields = currentStepElement.querySelectorAll('[required]');
+          let firstInvalidField = null;
+
+          requiredFields.forEach(field => {
+              field.classList.remove('is-invalid'); // Reset validation state
+              let fieldIsValid = true;
+
+              if (field.type === 'checkbox' || field.type === 'radio') {
+                  // For groups, check if at least one is checked if required
+                  const groupName = field.name;
+                  if (currentStepElement.querySelector(`input[name="${groupName}"]:checked`) === null) {
+                     // Need a way to show validation error for checkbox/radio groups
+                     // For now, just mark the first one as invalid conceptually
+                     if(field === requiredFields[0]) fieldIsValid = false;
+                  }
+              } else if (field.id === 'satisfaction-input') { // Special validation for satisfaction slider
+                  if (!field.value || field.value === "" || parseInt(field.value) < 0 || parseInt(field.value) > 100) { // Check if a value is set
+                      fieldIsValid = false;
+                      const meter = document.getElementById('satisfaction-meter');
+                      meter.classList.add('is-invalid'); // Add class to meter for visual feedback
+                      meter.style.boxShadow = `0 0 0 0.25rem hsla(var(--danger-h), var(--danger-s), var(--danger-l), 0.25)`;
+                      meter.animate( // Shake animation
+                          [ { transform: 'translateX(0)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' } ],
+                          { duration: 300 }
+                      );
+                      // Show the invalid feedback message associated with the hidden input
+                      field.nextElementSibling?.classList.add('d-block'); // Assuming feedback div follows input
+                 } else {
+                     const meter = document.getElementById('satisfaction-meter');
+                     meter.classList.remove('is-invalid');
+                     meter.style.boxShadow = ''; // Remove error shadow
+                     field.nextElementSibling?.classList.remove('d-block');
+                 }
+              }
+              else if (!field.value.trim()) { // General input/select/textarea
+                  fieldIsValid = false;
+              }
+
+              if (!fieldIsValid) {
+                  isValid = false;
+                  field.classList.add('is-invalid');
+                  if (!firstInvalidField) {
+                      firstInvalidField = field;
+                  }
+                  // Add shake animation to invalid fields
+                  field.animate(
+                      [ { transform: 'translateX(0)' }, { transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'translateX(0)' } ],
+                      { duration: 250 }
+                  );
+              }
+          });
+
+          if (!isValid && firstInvalidField) {
+              firstInvalidField.focus(); // Focus the first invalid field
+          }
+
+          return isValid;
+      }
+
+
+      // Navigation Button Event Listeners
+      document.getElementById('btn-to-step-2')?.addEventListener('click', () => { if (validateStep(1)) goToStep(2); });
+      document.getElementById('btn-to-step-1')?.addEventListener('click', () => goToStep(1));
+      document.getElementById('btn-to-step-3')?.addEventListener('click', () => { if (validateStep(2)) goToStep(3); });
+      document.getElementById('btn-to-step-2-from-3')?.addEventListener('click', () => goToStep(2));
+      document.getElementById('btn-to-step-4')?.addEventListener('click', () => { if (validateStep(3)) goToStep(4); });
+      document.getElementById('btn-to-step-3-from-4')?.addEventListener('click', () => goToStep(3));
+
+      // Submit Button
+      const submitButton = document.getElementById('btn-submit');
+      const originalSubmitText = submitButton.innerHTML;
+      submitButton?.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (validateStep(4)) {
+              submitButton.disabled = true;
+              submitButton.innerHTML = `<div class="typing-indicator"><span class="typing-indicator-dot"></span><span class="typing-indicator-dot"></span><span class="typing-indicator-dot"></span></div> Sending...`;
+
+              // --- Simulate form submission ---
+              // In a real app, you would collect form data here:
+              // const formData = new FormData(form);
+              // const data = Object.fromEntries(formData.entries());
+              // console.log('Form Data:', data);
+              // and send it using fetch() or similar.
+
+              setTimeout(() => {
+                  // Show success
+                  formSteps.forEach(step => step.classList.remove('active'));
+                  updateWizardProgress(totalWizardSteps + 1); // Move to "Complete" step visual
+                  successAnimation.classList.add('active');
+                  createConfetti();
+
+                  // Hide progress indicator after a delay
+                  setTimeout(() => { progressContainer.classList.remove('visible'); }, 3000);
+
+                  // Optional: Reset form after success animation finishes visually
+                  // setTimeout(() => {
+                  //    form.reset();
+                  //    // Reset satisfaction meter visuals
+                  //    updateSatisfactionUI(50); // Reset to neutral
+                  //    // Reset service tiles
+                  //    document.querySelectorAll('.service-checkbox').forEach(cb => cb.checked = false);
+                  //    document.querySelectorAll('.service-tile').forEach(tile => tile.classList.remove('checked')); // If using class
+                  //    updateFormProgress(); // Reset progress bar
+                  //    goToStep(1); // Go back to first step
+                  //    successAnimation.classList.remove('active');
+                  //    submitButton.disabled = false;
+                  //    submitButton.innerHTML = originalSubmitText;
+                  // }, 4000); // Delay matching confetti fade out + a bit more
+
+
+              }, 1500); // Simulate network delay
+          } else {
+               console.log("Validation failed on step 4");
+          }
+      });
+
+      /* ===== Satisfaction Meter ===== */
+      const satisfactionMeter = document.getElementById('satisfaction-meter');
+      const satisfactionFill = document.getElementById('satisfaction-fill');
+      const satisfactionHandle = document.getElementById('satisfaction-handle');
+      const satisfactionValueDisplay = document.getElementById('satisfaction-value');
+      const satisfactionInput = document.getElementById('satisfaction-input');
+      const satisfactionLabels = document.querySelectorAll('.satisfaction-label');
+
+      let isDragging = false;
+      let currentPercentage = 50; // Start at neutral
+
+      function updateSatisfactionUI(percentage) {
+          currentPercentage = Math.max(0, Math.min(100, Math.round(percentage))); // Round percentage
+
+          satisfactionFill.style.width = `${currentPercentage}%`;
+          satisfactionHandle.style.left = `${currentPercentage}%`;
+          satisfactionInput.value = currentPercentage; // Update hidden input
+
+          // Update ARIA value
+          satisfactionMeter.setAttribute('aria-valuenow', currentPercentage);
+
+
+           // Clear validation state when user interacts
+          satisfactionMeter.classList.remove('is-invalid');
+          satisfactionMeter.style.boxShadow = '';
+          satisfactionInput.nextElementSibling?.classList.remove('d-block');
+
+
+          let satisfactionText, iconClass;
+          let activeLabelIndex = -1;
+
+          if (currentPercentage <= 15) { // Adjusted thresholds
+              satisfactionText = "Very Dissatisfied"; iconClass = "fa-angry"; activeLabelIndex = 0;
+          } else if (currentPercentage <= 40) {
+              satisfactionText = "Dissatisfied"; iconClass = "fa-frown"; activeLabelIndex = 1;
+          } else if (currentPercentage <= 60) {
+              satisfactionText = "Neutral"; iconClass = "fa-meh"; activeLabelIndex = -1; // No label active for neutral, or choose one? Let's choose satisfied.
+          } else if (currentPercentage <= 85) {
+              satisfactionText = "Satisfied"; iconClass = "fa-smile"; activeLabelIndex = 2;
+          } else {
+              satisfactionText = "Very Satisfied"; iconClass = "fa-grin-stars"; activeLabelIndex = 3;
+          }
+
+          satisfactionValueDisplay.textContent = satisfactionText;
+          satisfactionHandle.innerHTML = `<i class="fas ${iconClass} fa-fw"></i>`; // Added fa-fw
+
+          // Update active label
+          satisfactionLabels.forEach((label, index) => {
+              label.classList.toggle('active', index === activeLabelIndex);
+          });
+
+           // Trigger input event for progress tracking
+           satisfactionInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+       // Initial setup based on default value
+       updateSatisfactionUI(parseInt(satisfactionInput.value) || 50);
+
+
+      function handleInteraction(clientX) {
+          const rect = satisfactionMeter.getBoundingClientRect();
+          const newPercentage = ((clientX - rect.left) / rect.width) * 100;
+          updateSatisfactionUI(newPercentage);
+      }
+
+      // Mouse Events
+      satisfactionMeter.addEventListener('click', (e) => {
+          handleInteraction(e.clientX);
+          // Add a small visual confirmation effect
+           satisfactionHandle.animate( [ { transform: 'translate(-50%, -50%) scale(1)' }, { transform: 'translate(-50%, -50%) scale(1.2)' }, { transform: 'translate(-50%, -50%) scale(1)' } ], { duration: 200, easing: 'ease-out' });
+      });
+      satisfactionHandle.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          satisfactionHandle.style.cursor = 'grabbing';
+          satisfactionHandle.focus(); // Keep focus on handle during drag
+          e.preventDefault(); // Prevent text selection
+      });
+      document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+           // Use requestAnimationFrame for potentially smoother updates during drag
+           requestAnimationFrame(() => handleInteraction(e.clientX));
+      });
+      document.addEventListener('mouseup', () => {
+          if (isDragging) {
+              isDragging = false;
+              satisfactionHandle.style.cursor = 'grab';
+          }
+      });
+
+      // Touch Events
+       satisfactionMeter.addEventListener('touchstart', (e) => {
+           if (e.target === satisfactionHandle) {
+                isDragging = true;
+                satisfactionHandle.style.cursor = 'grabbing';
+                satisfactionHandle.focus();
+           }
+            // Allow touch anywhere on the bar to set value
+           handleInteraction(e.touches[0].clientX);
+           e.preventDefault();
+        }, { passive: false });
+
+       document.addEventListener('touchmove', (e) => {
+          if (!isDragging || e.touches.length === 0) return;
+           requestAnimationFrame(() => handleInteraction(e.touches[0].clientX));
+           e.preventDefault();
+        }, { passive: false }); // Need preventDefault to stop scrolling on mobile
+
+       document.addEventListener('touchend', () => {
+          if (isDragging) {
+              isDragging = false;
+              satisfactionHandle.style.cursor = 'grab';
+          }
+       });
+
+
+      // Label Clicks/Keys
+      satisfactionLabels.forEach(label => {
+          const value = parseInt(label.getAttribute('data-value'));
+          // Click Listener
+          label.addEventListener('click', () => {
+              updateSatisfactionUI(value);
+              label.animate( [ { transform: 'translateY(0)' }, { transform: 'translateY(-5px)' }, { transform: 'translateY(0)' } ], { duration: 300, easing: 'ease-out' });
+          });
+           // Keyboard Listener (Enter/Space)
+           label.addEventListener('keydown', (e) => {
+               if (e.key === 'Enter' || e.key === ' ') {
+                   updateSatisfactionUI(value);
+                   e.preventDefault(); // Prevent space from scrolling
+               }
+           });
+      });
+
+       // Keyboard navigation for the slider handle
+        satisfactionHandle.addEventListener('keydown', (e) => {
+            let newValue = currentPercentage;
+            if (e.key === 'ArrowLeft') {
+                newValue = Math.max(0, currentPercentage - 5); // Decrease by 5
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                newValue = Math.min(100, currentPercentage + 5); // Increase by 5
+                 e.preventDefault();
+            } else if (e.key === 'Home') {
+                newValue = 0;
+                 e.preventDefault();
+            } else if (e.key === 'End') {
+                newValue = 100;
+                 e.preventDefault();
+            }
+            if (newValue !== currentPercentage) {
+                updateSatisfactionUI(newValue);
+            }
+        });
+
+
+      /* ===== Service Tiles Enhancement ===== */
+      const serviceTiles = document.querySelectorAll('.service-tile');
+      serviceTiles.forEach(tile => {
+         const checkbox = tile.querySelector('.service-checkbox');
+
+         const handleClickOrKey = (e) => {
+             checkbox.checked = !checkbox.checked;
+             // Trigger change event for progress tracking
+             checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+             // Add visual feedback
+             tile.animate(
+                [ { transform: 'scale(1)' }, { transform: 'scale(0.97)' }, { transform: 'scale(1)' } ],
+                { duration: 200, easing: 'ease-in-out' }
+             );
+             e.preventDefault(); // Prevent default if keydown
+         }
+
+         tile.addEventListener('click', handleClickOrKey);
+         tile.addEventListener('keydown', (e) => {
+             if (e.key === 'Enter' || e.key === ' ') {
+                 handleClickOrKey(e);
+             }
+         });
+      });
+
+
+      /* ===== Confetti Animation ===== */
+      function createConfetti() {
+          const canvas = document.getElementById('confetti-canvas');
+          if (!canvas) return; // Exit if canvas not found
+
+          canvas.style.display = 'block';
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+
+          const myConfetti = confetti.create(canvas, {
+              resize: true, // Resize confetti canvas with window
+              useWorker: true // Use worker thread for better performance
+          });
+
+           const duration = 5 * 1000; // 5 seconds
+           const animationEnd = Date.now() + duration;
+           const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+           function randomInRange(min, max) {
+               return Math.random() * (max - min) + min;
+           }
+
+           const interval = setInterval(function() {
+               const timeLeft = animationEnd - Date.now();
+
+               if (timeLeft <= 0) {
+                   clearInterval(interval);
+                   // Hide canvas after animation + short delay
+                   setTimeout(() => { canvas.style.display = 'none'; }, 1000);
+                   return;
+               }
+
+               const particleCount = 50 * (timeLeft / duration);
+               // Launch confetti from random points
+               myConfetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 } }));
+
+           }, 250); // Launch bursts every 250ms
+
+           // Initial burst
+            myConfetti({
+              particleCount: 150,
+              spread: 100,
+              origin: { y: 0.6 },
+              colors: ['#5e72e4', '#2dceb9', '#f973b3', '#2dce89', '#fb6340', '#ffffff'] // Added white
+            });
+      }
+
+      /* ===== Form Progress Tracking ===== */
+      const allTrackedFields = document.querySelectorAll('input:not([type="hidden"]), select, textarea'); // Exclude hidden satisfaction input initially
+       const satisfactionField = document.getElementById('satisfaction-input');
+
+      function updateFormProgress() {
+          let completed = 0;
+          let totalFields = allTrackedFields.length;
+
+           // Count standard fields
+          allTrackedFields.forEach(field => {
+               if (field.type === 'checkbox' || field.type === 'radio') {
+                    // Consider a group checked if at least one is selected
+                    const groupName = field.name;
+                    if (document.querySelector(`input[name="${groupName}"]:checked`)) {
+                       // Only count the group once
+                       if(field === document.querySelector(`input[name="${groupName}"]`)) {
+                           completed++;
+                       }
+                   }
+               } else if (field.value && field.value.trim() !== '') {
+                    completed++;
+               }
+          });
+
+          // Special handling for satisfaction meter (count as 1 field if value is set)
+           if (satisfactionField && satisfactionField.value !== "" && satisfactionField.value >= 0) {
+               completed++;
+               // Add satisfaction field to total count if not already included
+               if (!Array.from(allTrackedFields).includes(satisfactionField)) {
+                    // It's hidden, so it wasn't counted. Add 1 to total.
+                    // However, we should count it as *one* potential field to fill.
+                    // Let's just assume satisfaction IS one of the fields.
+               }
+           }
+          // Recalculate total fields to include satisfaction as one field
+           totalFields = allTrackedFields.length; // Recalculate based on query
+           // Check if satisfaction input exists and add 1 if it wasn't in the initial query
+           if (satisfactionField && !Array.from(allTrackedFields).includes(satisfactionField)) {
+                 totalFields++;
+            }
+
+
+          const percent = totalFields > 0 ? Math.round((completed / totalFields) * 100) : 0;
+          progressFill.style.width = `${percent}%`;
+          progressPercentage.textContent = `${percent}%`;
+
+          // Show/Hide progress container
+          if (completed > 0) {
+               progressContainer.classList.add('visible');
+          } else {
+               progressContainer.classList.remove('visible');
+          }
+      }
+
+      // Add listeners to all relevant fields
+      allTrackedFields.forEach(field => {
+          field.addEventListener('input', updateFormProgress);
+          field.addEventListener('change', updateFormProgress); // For select, checkbox, radio
+      });
+       // Add listener specifically to satisfaction hidden input
+       satisfactionField?.addEventListener('input', updateFormProgress);
+       satisfactionField?.addEventListener('change', updateFormProgress);
+
+
+      // Initial check in case form is pre-filled
+      updateFormProgress();
+
+    });
+  </script>
+</body>
+</html>
